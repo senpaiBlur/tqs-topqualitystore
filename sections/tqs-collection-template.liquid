@@ -66,12 +66,12 @@
 
     {% if is_global %}
         {% assign list_query = 'products' %}
-        <div class="w-full max-w-md lg:max-w-6xl mx-auto px-4 lg:px-8">
+        <div class="w-full max-w-7xl mx-auto px-4 lg:px-8">
     {% else %}
         {% assign list_query = 'collection.products' %}
         <shopify-context type="collection" handle="{{ active_collection }}">
             <template>
-            <div class="w-full max-w-md lg:max-w-6xl mx-auto px-4 lg:px-8">
+            <div class="w-full max-w-7xl mx-auto px-4 lg:px-8">
     {% endif %}
 
         <!-- Editorial Header & Filter/Sort -->
@@ -84,21 +84,56 @@
             </div>
             
             <!-- Filter/Sort Bar -->
-            <div class="flex items-center gap-2 mt-2 max-w-md">
-                <button class="flex-1 bg-surface-container-high text-on-surface-variant rounded-xl py-3 px-4 flex items-center justify-center gap-2 font-body text-sm font-medium hover:bg-surface-variant transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">tune</span>
-                    Filter
-                </button>
-                <div class="w-px h-6 bg-outline-variant/30 hidden"></div> <!-- divider -->
-                <button class="flex-1 bg-surface-container-high text-on-surface-variant rounded-xl py-3 px-4 flex items-center justify-center gap-2 font-body text-sm font-medium hover:bg-surface-variant transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">sort</span>
-                    Sort
-                </button>
+            <div class="flex flex-col sm:flex-row items-center gap-4 mt-2 max-w-2xl">
+                <!-- Collection Filter -->
+                <div class="relative w-full sm:w-1/2">
+                    <select id="collectionDropdown" onchange="window.location.href=this.value" class="w-full appearance-none bg-surface-container-high text-on-surface-variant rounded-xl py-3 px-4 pr-10 font-body text-sm font-medium hover:bg-surface-variant transition-colors outline-none cursor-pointer">
+                        <option value="/collections/all">All Collections</option>
+                        {% for c in collections %}
+                            <option value="{{ c.url }}" {% if collection.handle == c.handle %}selected{% endif %}>{{ c.title }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[18px] text-on-surface-variant">expand_more</span>
+                </div>
+
+                <!-- Sort By -->
+                <div class="relative w-full sm:w-1/2">
+                    <select id="sortDropdown" onchange="applySort(this.value)" class="w-full appearance-none bg-surface-container-high text-on-surface-variant rounded-xl py-3 px-4 pr-10 font-body text-sm font-medium hover:bg-surface-variant transition-colors outline-none cursor-pointer">
+                        <option value="">Sort By: Default</option>
+                        <option value="TITLE_ASC">Alphabetically, A-Z</option>
+                        <option value="TITLE_DESC">Alphabetically, Z-A</option>
+                        <option value="PRICE_ASC">Price, low to high</option>
+                        <option value="PRICE_DESC">Price, high to low</option>
+                        <option value="CREATED_AT_DESC">Date, new to old</option>
+                        <option value="CREATED_AT_ASC">Date, old to new</option>
+                    </select>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[18px] text-on-surface-variant">sort</span>
+                </div>
             </div>
+
+            <script>
+                function applySort(value) {
+                    if (!value) return;
+                    const listContext = document.querySelector('shopify-list-context');
+                    if (listContext) {
+                        const parts = value.split('_');
+                        const isDesc = parts[parts.length - 1] === 'DESC';
+                        const sortKey = parts.slice(0, -1).join('_'); // e.g., TITLE, PRICE, CREATED_AT
+                        
+                        listContext.setAttribute('sort-key', sortKey);
+                        listContext.setAttribute('sortKey', sortKey); // just in case for different SDK versions
+                        if(isDesc) {
+                            listContext.setAttribute('reverse', 'true');
+                        } else {
+                            listContext.removeAttribute('reverse');
+                        }
+                    }
+                }
+            </script>
         </section>
 
-        <!-- Product Grid (2-Column Mobile, 4-Column Desktop) -->
-        <shopify-list-context class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8" type="product" query="{{ list_query }}" first="24">
+        <!-- Product Grid Responsive (2 Mobile, 3 Tablet, 4 Desktop, 5 Large Desktop) -->
+        <shopify-list-context class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6" type="product" query="{{ list_query }}" first="24">
             <template>
                     <!-- Product Card -->
                     <article class="flex flex-col bg-surface-container-low rounded-xl overflow-hidden relative group custom-product-card shadow-[0_4px_20px_rgba(30,30,30,0.02)] hover:shadow-[0_12px_36px_rgba(30,30,30,0.06)] transition-all duration-300">
