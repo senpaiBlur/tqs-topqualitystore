@@ -1,4 +1,6 @@
+import os
 
+new_collection_liquid = """
 {% schema %}
 {
   "name": "TQS Collection Page",
@@ -173,3 +175,7 @@
         </shopify-context>
     {% endif %}
 </div>
+"""
+
+with open(r"f:\TQS website\tqs-topqualitystore-myshopify-com\sections\tqs-collection-template.liquid", "w", encoding="utf-8") as f:
+    f.write(new_collection_liquid)

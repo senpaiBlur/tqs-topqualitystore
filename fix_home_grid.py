@@ -1,0 +1,319 @@
+import os
+
+# Let's rebuild the section cleanly
+schema_and_nav = """<style>
+  shopify-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 700ms;
+  }
+  .group:hover shopify-media img {
+      transform: scale(1.05);
+  }
+</style>
+
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#faf9f9]/80 backdrop-blur-xl shadow-sm text-[#020202] flex flex-col max-w-none transition-all duration-300">
+  <div class="px-6 md:px-12 py-4 flex items-center justify-between">
+      <!-- Brand Logo -->
+      <a class="text-2xl font-black tracking-tighter text-[#020202] font-headline hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/">
+          Top Quality Store (TQS)
+      </a>
+      <!-- Navigation Links (Web) -->
+      <div class="hidden md:flex space-x-8 items-center font-['Be_Vietnam_Pro'] tracking-tight text-sm uppercase font-semibold">
+          <a class="text-[#000000] border-b-2 border-[#000000] pb-1 hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/">Home</a>
+          <a class="text-[#3c3b3b] hover:text-[#000000] transition-colors hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/collections/all">All Products</a>
+          <a class="text-[#3c3b3b] hover:text-[#000000] transition-colors hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/collections/face-wash">Face Wash</a>
+          <a class="text-[#3c3b3b] hover:text-[#000000] transition-colors hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/collections/serums">Serums</a>
+          <a class="text-[#3c3b3b] hover:text-[#000000] transition-colors hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/collections/creams">Creams</a>
+          <a class="text-[#3c3b3b] hover:text-[#000000] transition-colors hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/collections/under-eye-care">Under Eye Care</a>
+          <a class="text-[#3c3b3b] hover:text-[#000000] transition-colors hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/blogs/news">Blogs</a>
+      </div>
+      <!-- Trailing Icons -->
+      <div class="flex items-center space-x-4">
+          <a href="/search" aria-label="Search" class="text-[#020202] hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100 p-2">
+              <span class="material-symbols-outlined" data-icon="search">search</span>
+          </a>
+          <a href="/account" aria-label="Profile" class="text-[#020202] hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100 p-2">
+              <span class="material-symbols-outlined" data-icon="person">person</span>
+          </a>
+          <button aria-label="Cart" class="text-[#020202] hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100 p-2 relative" onclick="document.getElementById('cart').showModal();">
+              <span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+          </button>
+          <!-- Mobile Menu Toggle -->
+          <button class="md:hidden text-[#020202] p-2 hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100">
+              <span class="material-symbols-outlined" data-icon="menu">menu</span>
+          </button>
+      </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="pt-24 pb-32">
+  
+  <!-- Hero Section: Dynamic Loop with JS Fade -->
+  <div id="hero-slider-container">
+    <shopify-list-context type="product" query="products" first="4">
+      <template>
+          <section class="hero-slide hidden flex-col lg:flex-row bg-surface px-6 md:px-12 lg:px-24 py-12 gap-12 lg:gap-24 relative overflow-hidden transition-opacity duration-1000 opacity-0" style="min-height: 870px;">
+              <!-- Left: High-quality skincare bottle image -->
+              <div class="w-full lg:w-1/2 flex items-center justify-center relative">
+                  <div class="absolute inset-0 bg-surface-container-low rounded-[2rem] transform -rotate-3 scale-105 z-0 transition-transform duration-700 hover:rotate-0"></div>
+                  <!-- Use shopify-media wrapping class for proper fit -->
+                  <div class="relative z-10 w-full max-w-md h-auto rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(26,28,28,0.06)] aspect-[3/4]">
+                    <shopify-media query="product.selectedOrFirstAvailableVariant.image"></shopify-media>
+                  </div>
+              </div>
+              
+              <!-- Right: Content -->
+              <div class="w-full lg:w-1/2 flex flex-col justify-center space-y-8 z-10">
+                  <div class="space-y-4">
+                      <p class="font-label text-sm uppercase tracking-widest text-outline">
+                          <shopify-data query="product.vendor"></shopify-data>
+                      </p>
+                      <h1 class="font-headline text-5xl md:text-6xl lg:text-7xl font-black text-primary leading-none tracking-tighter">
+                          <shopify-data query="product.title"></shopify-data>
+                      </h1>
+                      <p class="font-body text-xl text-on-surface-variant max-w-lg leading-relaxed line-clamp-3">
+                          <shopify-data query="product.description"></shopify-data>
+                      </p>
+                  </div>
+                  
+                  <!-- Custom Buttons Map -->
+                  <div class="flex flex-wrap items-center gap-4">
+                      <!-- Buy Now -->
+                      <button onclick="document.querySelector('shopify-store').buyNow(event)" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="inline-flex items-center justify-center px-8 py-4 bg-primary text-on-primary font-headline font-bold text-sm uppercase tracking-wide rounded-full hover:opacity-90 transition-opacity">
+                          Buy Now
+                      </button>
+                      
+                      <!-- Paid Order (Save 10%) -->
+                      <button onclick="document.querySelector('shopify-store').buyNow(event)" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="inline-flex items-center justify-center px-8 py-4 bg-surface-container-high border-[1.5px] border-outline-variant text-on-surface font-headline font-bold text-sm uppercase tracking-wide rounded-full relative hover:bg-surface-container-highest transition-colors">
+                          Paid Order
+                          <span class="absolute -top-2 -right-2 bg-error text-white px-2.5 py-1 text-[10px] rounded-full shadow-md font-bold tracking-widest">SAVE 10%</span>
+                      </button>
+
+                      <!-- WhatsApp Button -->
+                      <a href="https://wa.me/918506934982?text=I'm%20interested%20in%20creating%20an%20order" target="_blank" class="inline-flex items-center justify-center px-6 py-4 bg-[#25D366] text-white font-headline font-bold text-sm uppercase tracking-wide rounded-full hover:opacity-90 transition-opacity gap-2 shadow-[0_4px_12px_rgba(37,211,102,0.3)]">
+                          Order on WhatsApp
+                      </a>
+
+                      <!-- Add to Cart Icon Only -->
+                      <button onclick="document.getElementById('cart').addLine(event).showModal();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" aria-label="Add to cart" class="inline-flex flex-shrink-0 items-center justify-center w-[52px] h-[52px] bg-transparent border-[2px] border-primary text-primary rounded-full hover:bg-primary/5 transition-all">
+                          <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">shopping_bag</span>
+                      </button>
+                  </div>
+                  
+                  <!-- Trust Badges -->
+                  <div class="pt-8 flex flex-wrap gap-4 border-t border-surface-container-low">
+                      <div class="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-full">
+                          <span class="material-symbols-outlined text-sm text-tertiary-fixed-dim" data-icon="science">science</span>
+                          <span class="font-label text-xs font-semibold text-on-surface">Clinically tested</span>
+                      </div>
+                      <div class="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-full">
+                          <span class="material-symbols-outlined text-sm text-tertiary-fixed-dim" data-icon="eco">eco</span>
+                          <span class="font-label text-xs font-semibold text-on-surface">Herbal</span>
+                      </div>
+                      <div class="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-full">
+                          <span class="material-symbols-outlined text-sm text-tertiary-fixed-dim" data-icon="block">block</span>
+                          <span class="font-label text-xs font-semibold text-on-surface">No added sugar</span>
+                      </div>
+                  </div>
+              </div>
+          </section>
+      </template>
+      <div shopify-loading-placeholder class="w-full text-center py-64 text-tertiary-fixed-dim font-headline font-bold text-xl uppercase tracking-widest">
+         Loading Premium Collection...
+      </div>
+    </shopify-list-context>
+  </div>
+
+  <script>
+      // Javascript to rotate hero-slides seamlessly
+      document.addEventListener("DOMContentLoaded", () => {
+         let initSlider = setInterval(() => {
+            const slides = document.querySelectorAll('.hero-slide');
+            if(slides.length > 0) {
+               // Initial setup
+               slides.forEach(s => { s.classList.remove('flex', 'lg:flex-row'); s.style.display = 'none'; });
+               let currentIndex = 0;
+               
+               const showSlide = (index) => {
+                   slides[index].style.display = 'flex';
+                   slides[index].classList.add('lg:flex-row'); // restore layout
+                   // Small delay to allow display:flex to render before opacity transition
+                   setTimeout(() => {
+                       slides[index].classList.remove('opacity-0');
+                       slides[index].classList.add('opacity-100');
+                   }, 50);
+               };
+
+               const hideSlide = (index, callback) => {
+                   slides[index].classList.remove('opacity-100');
+                   slides[index].classList.add('opacity-0');
+                   // Wait for transition to finish
+                   setTimeout(() => {
+                       slides[index].style.display = 'none';
+                       slides[index].classList.remove('lg:flex-row');
+                       if (callback) callback();
+                   }, 1000); 
+               };
+
+               showSlide(currentIndex);
+
+               setInterval(() => {
+                   hideSlide(currentIndex, () => {
+                       currentIndex = (currentIndex + 1) % slides.length;
+                       showSlide(currentIndex);
+                   });
+               }, 6000); // 6 sec per slide (includes the 1s fade)
+               
+               clearInterval(initSlider); // Stop polling
+            }
+         }, 500); // Poll every half second until Web Components render the DOM
+      });
+  </script>
+
+  <!-- Category Shortcuts -->
+  <section class="py-16 px-6 md:px-12 lg:px-24 bg-surface-container-low mt-8 border-y border-outline-variant/20">
+      <div class="max-w-7xl mx-auto flex flex-wrap justify-center gap-4">
+          <a class="px-6 py-3 bg-surface-container-lowest text-on-surface font-label text-sm font-semibold rounded-full shadow-[0_4px_12px_rgba(26,28,28,0.03)] hover:shadow-[0_8px_24px_rgba(26,28,28,0.06)] transition-all" href="/collections/face-wash">Face Wash</a>
+          <a class="px-6 py-3 bg-surface-container-lowest text-on-surface font-label text-sm font-semibold rounded-full shadow-[0_4px_12px_rgba(26,28,28,0.03)] hover:shadow-[0_8px_24px_rgba(26,28,28,0.06)] transition-all" href="/collections/serums">Serums</a>
+          <a class="px-6 py-3 bg-surface-container-lowest text-on-surface font-label text-sm font-semibold rounded-full shadow-[0_4px_12px_rgba(26,28,28,0.03)] hover:shadow-[0_8px_24px_rgba(26,28,28,0.06)] transition-all" href="/collections/creams">Creams</a>
+          <a class="px-6 py-3 bg-surface-container-lowest text-on-surface font-label text-sm font-semibold rounded-full shadow-[0_4px_12px_rgba(26,28,28,0.03)] hover:shadow-[0_8px_24px_rgba(26,28,28,0.06)] transition-all" href="/collections/under-eye-care">Under Eye Care</a>
+          <a class="px-6 py-3 bg-surface-container-lowest text-on-surface font-label text-sm font-semibold rounded-full shadow-[0_4px_12px_rgba(26,28,28,0.03)] hover:shadow-[0_8px_24px_rgba(26,28,28,0.06)] transition-all" href="/collections/toners">Toners</a>
+          <a class="px-6 py-3 bg-surface-container-lowest text-on-surface font-label text-sm font-semibold rounded-full shadow-[0_4px_12px_rgba(26,28,28,0.03)] hover:shadow-[0_8px_24px_rgba(26,28,28,0.06)] transition-all" href="/collections/masks">Masks</a>
+      </div>
+  </section>
+
+  <!-- Product Grid -->
+  <section class="py-24 px-6 md:px-12 lg:px-24 bg-surface">
+      <div class="max-w-7xl mx-auto flex flex-col space-y-16">
+          <div class="flex flex-col md:flex-row justify-between items-end gap-8">
+              <div class="space-y-4">
+                  <h2 class="font-headline text-4xl md:text-5xl font-black text-primary tracking-tighter">
+                      High-Quality Ingredients.<br/>Honest Formulations.
+                  </h2>
+              </div>
+          </div>
+
+          <div id="grid-main" class="grid grid-cols-2 lg:grid-cols-4 gap-x-4 md:gap-x-8 gap-y-12 md:gap-y-16">
+              <shopify-list-context type="product" query="products" first="12">
+                  <template>
+                      <div class="group flex flex-col space-y-4">
+                          <!-- Image Card -->
+                          <div class="relative aspect-[4/5] bg-surface-container-low rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(26,28,28,0.03)] group/img">
+                              <a shopify-attr--href="product.onlineStoreUrl" class="block w-full h-full">
+                                <shopify-media query="product.selectedOrFirstAvailableVariant.image"></shopify-media>
+                              </a>
+                              
+                              <div class="absolute top-4 left-4 flex flex-col gap-2">
+                                  <span class="bg-secondary-container text-on-surface px-2 py-1 rounded-sm font-label text-[10px] uppercase font-bold tracking-widest shadow-sm">
+                                      <shopify-data query="product.vendor"></shopify-data>
+                                  </span>
+                                  <shopify-context type="product">
+                                    <template>
+                                      <div class="save-badge bg-error text-white px-2 py-1 rounded-sm font-label text-[10px] uppercase font-bold tracking-widest shadow-sm"
+                                           shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > product.selectedOrFirstAvailableVariant.price.amount ? 'display:block' : 'display:none'">
+                                        SAVE {{ product.selectedOrFirstAvailableVariant.compareAtPrice.amount | minus: product.selectedOrFirstAvailableVariant.price.amount | times: 100 | divided_by: product.selectedOrFirstAvailableVariant.compareAtPrice.amount | round }}%
+                                      </div>
+                                    </template>
+                                  </shopify-context>
+                              </div>
+
+                              <!-- Overlay Action Buttons for Desktop Hover -->
+                              <div class="absolute inset-x-4 bottom-4 translate-y-4 opacity-0 group-hover/img:translate-y-0 group-hover/img:opacity-100 transition-all duration-300 hidden md:flex gap-2">
+                                  <button onclick="document.querySelector('shopify-store').buyNow(event); event.preventDefault();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="flex-grow bg-primary text-on-primary py-3 rounded-full font-headline font-bold text-[10px] uppercase tracking-widest hover:bg-inverse-surface transition-colors cursor-pointer">
+                                      Buy Now
+                                  </button>
+                                  <button onclick="document.getElementById('cart').addLine(event).showModal(); event.preventDefault();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="w-12 h-12 bg-surface-container-lowest text-primary rounded-full flex items-center justify-center hover:bg-surface-dim transition-colors cursor-pointer shadow-lg">
+                                      <span class="material-symbols-outlined text-[20px] pointer-events-none">add</span>
+                                  </button>
+                              </div>
+                          </div>
+                          
+                          <!-- Info -->
+                          <div class="flex flex-col flex-grow">
+                              <a shopify-attr--href="product.onlineStoreUrl" class="space-y-1 block">
+                                  <h3 class="font-headline text-base md:text-lg font-bold text-primary truncate">
+                                      <shopify-data query="product.title"></shopify-data>
+                                  </h3>
+                                  <div class="flex items-center flex-wrap gap-2 pt-1">
+                                      <span class="font-headline text-lg font-bold text-primary">
+                                          <shopify-money query="product.selectedOrFirstAvailableVariant.price"></shopify-money>
+                                      </span>
+                                      <span class="font-body text-sm text-outline line-through opacity-60" shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > 0 ? 'display:inline' : 'display:none'">
+                                          <shopify-money query="product.selectedOrFirstAvailableVariant.compareAtPrice"></shopify-money>
+                                      </span>
+                                  </div>
+                              </a>
+                              
+                              <!-- Mobile Only Action Buttons (Stacked or simplified) -->
+                              <div class="mt-4 flex md:hidden gap-2">
+                                  <button onclick="document.querySelector('shopify-store').buyNow(event)" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="flex-grow bg-primary text-on-primary py-2.5 rounded-full font-headline font-bold text-[10px] uppercase tracking-widest cursor-pointer">
+                                      Buy Now
+                                  </button>
+                                  <button onclick="document.getElementById('cart').addLine(event).showModal();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="w-10 h-10 border border-primary text-primary rounded-full flex items-center justify-center cursor-pointer">
+                                      <span class="material-symbols-outlined text-[18px] pointer-events-none">add</span>
+                                  </button>
+                              </div>
+                          </div>
+                      </div>
+                  </template>
+                  <div shopify-loading-placeholder class="col-span-2 lg:col-span-4 text-center py-40">
+                      <div class="animate-pulse flex flex-col items-center">
+                          <div class="w-12 h-12 bg-surface-container-highest rounded-full mb-4"></div>
+                          <p class="font-headline text-primary opacity-50 uppercase tracking-widest text-xs">Curating Ingredients...</p>
+                      </div>
+                  </div>
+              </shopify-list-context>
+          </div>
+      </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-[#f4f3f3] text-[#020202] w-full pt-16 pb-8 transition-all duration-200 border-t border-outline-variant/20">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-12 px-8 md:px-16 max-w-7xl mx-auto">
+      <div class="space-y-4 md:col-span-1">
+          <h4 class="text-xl font-bold font-['Be_Vietnam_Pro'] text-[#000000]">Top Quality Store</h4>
+          <p class="font-['Lexend'] text-sm leading-relaxed text-[#3c3b3b]">
+              Curated skincare for the modern canvas.
+          </p>
+      </div>
+      <div class="space-y-4 md:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-8">
+          <div class="flex flex-col space-y-2 font-['Lexend'] text-sm leading-relaxed">
+              <a class="text-[#3c3b3b] hover:underline decoration-1 underline-offset-4 transition-all duration-200" href="#">Newsletter</a>
+              <a class="text-[#3c3b3b] hover:underline decoration-1 underline-offset-4 transition-all duration-200" href="#">Instagram</a>
+              <a class="text-[#3c3b3b] hover:underline decoration-1 underline-offset-4 transition-all duration-200" href="#">Facebook</a>
+          </div>
+          <div class="flex flex-col space-y-2 font-['Lexend'] text-sm leading-relaxed">
+              <a class="text-[#3c3b3b] hover:underline decoration-1 underline-offset-4 transition-all duration-200" href="#">Twitter</a>
+              <a class="text-[#3c3b3b] hover:underline decoration-1 underline-offset-4 transition-all duration-200" href="#">Terms</a>
+              <a class="text-[#3c3b3b] hover:underline decoration-1 underline-offset-4 transition-all duration-200" href="#">Privacy</a>
+          </div>
+      </div>
+  </div>
+  <div class="px-8 md:px-16 max-w-7xl mx-auto mt-16 pt-8 border-t border-[rgba(0,0,0,0.05)]">
+      <p class="font-['Lexend'] text-xs leading-relaxed text-[#3c3b3b]">
+          &copy; 2024 Top Quality Store. Designed for the Curated Canvas.
+      </p>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "TQS Home Storefront",
+  "settings": [],
+  "presets": [
+    {
+      "name": "TQS Home Storefront"
+    }
+  ]
+}
+{% endschema %}
+"""
+
+with open(r"f:\TQS website\tqs-topqualitystore-myshopify-com\sections\tqs-home-storefront.liquid", "w", encoding="utf-8") as f:
+    f.write(schema_and_nav)
