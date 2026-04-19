@@ -21,7 +21,7 @@
         <shopify-list-context type="product" query="products" first="6">
             <template>
                 <div class="group min-w-[280px] w-[280px] md:min-w-[320px] md:w-[320px] bg-surface-container-lowest rounded-3xl overflow-hidden flex flex-col snap-center ghost-border shadow-[0_10px_30px_rgba(26,28,28,0.03)] hover:shadow-[0_20px_40px_rgba(26,28,28,0.06)] transition-all duration-300 transform hover:-translate-y-1 relative">
-                    <a href="/products/${handle}" class="block relative">
+                    <a shopify-attr--href="product.onlineStoreUrl" class="block relative group-link">
                     <!-- Image -->
                     <div class="w-full h-[320px] bg-surface-container-low relative overflow-hidden">
                         <shopify-media query="product.selectedOrFirstAvailableVariant.image" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"></shopify-media>
