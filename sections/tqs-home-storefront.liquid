@@ -174,12 +174,9 @@
   <!-- Category Shortcuts -->
   <section class="py-16 px-6 md:px-12 lg:px-24 bg-surface-container-low mt-8 border-y border-outline-variant/20">
       <div class="max-w-7xl mx-auto flex flex-wrap justify-center gap-4">
-          <a class="px-6 py-3 bg-surface-container-lowest text-on-surface font-label text-sm font-semibold rounded-full shadow-[0_4px_12px_rgba(26,28,28,0.03)] hover:shadow-[0_8px_24px_rgba(26,28,28,0.06)] transition-all" href="/collections/face-wash">Face Wash</a>
-          <a class="px-6 py-3 bg-surface-container-lowest text-on-surface font-label text-sm font-semibold rounded-full shadow-[0_4px_12px_rgba(26,28,28,0.03)] hover:shadow-[0_8px_24px_rgba(26,28,28,0.06)] transition-all" href="/collections/serums">Serums</a>
-          <a class="px-6 py-3 bg-surface-container-lowest text-on-surface font-label text-sm font-semibold rounded-full shadow-[0_4px_12px_rgba(26,28,28,0.03)] hover:shadow-[0_8px_24px_rgba(26,28,28,0.06)] transition-all" href="/collections/creams">Creams</a>
-          <a class="px-6 py-3 bg-surface-container-lowest text-on-surface font-label text-sm font-semibold rounded-full shadow-[0_4px_12px_rgba(26,28,28,0.03)] hover:shadow-[0_8px_24px_rgba(26,28,28,0.06)] transition-all" href="/collections/under-eye-care">Under Eye Care</a>
-          <a class="px-6 py-3 bg-surface-container-lowest text-on-surface font-label text-sm font-semibold rounded-full shadow-[0_4px_12px_rgba(26,28,28,0.03)] hover:shadow-[0_8px_24px_rgba(26,28,28,0.06)] transition-all" href="/collections/toners">Toners</a>
-          <a class="px-6 py-3 bg-surface-container-lowest text-on-surface font-label text-sm font-semibold rounded-full shadow-[0_4px_12px_rgba(26,28,28,0.03)] hover:shadow-[0_8px_24px_rgba(26,28,28,0.06)] transition-all" href="/collections/masks">Masks</a>
+          {% for collection in collections %}
+            <a class="px-6 py-3 bg-surface-container-lowest text-on-surface font-label text-sm font-semibold rounded-full shadow-[0_4px_12px_rgba(26,28,28,0.03)] hover:shadow-[0_8px_24px_rgba(26,28,28,0.06)] transition-all" href="{{ collection.url }}">{{ collection.title }}</a>
+          {% endfor %}
       </div>
   </section>
 
