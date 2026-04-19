@@ -5,12 +5,22 @@
   "settings": [
     {
       "type": "header",
-      "content": "Collection Settings"
+      "content": "Navigation"
+    },
+    {
+      "type": "text",
+      "id": "brand_text",
+      "label": "Brand Name/Logo Text",
+      "default": "Top Quality Store (TQS)"
+    },
+    {
+      "type": "header",
+      "content": "Aesthetics"
     },
     {
       "type": "text",
       "id": "mobile_subtitle",
-      "label": "Mobile Subtitle",
+      "label": "Header Subtitle",
       "default": "Curated botanical remedies for daily vitality."
     }
   ],
@@ -23,6 +33,11 @@
 {% endschema %}
 
 <style>
+    /* Fixed Nav Padding Fix */
+    .collection-page-body {
+        padding-top: 100px;
+    }
+
     /* Headless Components Reset & Image Fixes */
     .custom-product-card shopify-media {
         display: block;
@@ -51,10 +66,27 @@
     }
     /* Hide shopify internal variant selectors */
     shopify-variant-selector { display: none !important; }
+
+    /* Custom Dropdown Styling */
+    .tqs-select-wrapper::after {
+        content: '\e5cf';
+        font-family: 'Material Symbols Outlined';
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        font-size: 20px;
+        color: #000;
+    }
+    .tqs-select {
+        appearance: none;
+        -webkit-appearance: none;
+    }
 </style>
 
-<!-- TopNavBar -->
-<nav class="w-full z-50 bg-[#faf9f9]/80 backdrop-blur-xl shadow-sm border-b border-outline-variant/20 text-[#020202] flex flex-col max-w-none transition-all duration-300">
+<!-- TopNavBar (IDENTICAL TO HOME) -->
+<nav class="fixed top-0 w-full z-50 bg-[#faf9f9]/80 backdrop-blur-xl shadow-sm text-[#020202] flex flex-col max-w-none transition-all duration-300 border-b border-outline-variant/10">
   <div class="px-6 md:px-12 py-4 flex items-center justify-between">
       <!-- Brand Logo -->
       <a class="text-2xl font-black tracking-tighter text-[#020202] font-headline hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/">
@@ -71,19 +103,19 @@
       <!-- Trailing Icons -->
       <div class="flex items-center space-x-4">
           <a href="/search" aria-label="Search" class="text-[#020202] hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100 p-2">
-              <span class="material-symbols-outlined" data-icon="search">search</span>
+              <span class="material-symbols-outlined">search</span>
           </a>
           <a href="/account" aria-label="Profile" class="text-[#020202] hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100 p-2">
-              <span class="material-symbols-outlined" data-icon="person">person</span>
+              <span class="material-symbols-outlined">person</span>
           </a>
           <button aria-label="Cart" class="text-[#020202] hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100 p-2 relative" onclick="document.getElementById('cart').showModal();">
-              <span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+              <span class="material-symbols-outlined">shopping_bag</span>
           </button>
       </div>
   </div>
 </nav>
 
-<div class="bg-surface text-on-surface w-full flex justify-center pb-20 pt-8">
+<div class="collection-page-body bg-surface text-on-surface w-full flex flex-col items-center pb-20">
     {% assign active_collection = collection.handle %}
     {% if active_collection == blank %}
         {% assign active_collection = 'all' %}
@@ -94,174 +126,132 @@
         {% assign is_global = true %}
     {% endif %}
 
-    {% if is_global %}
-        {% assign list_query = 'products' %}
-        <div class="w-full max-w-7xl mx-auto px-4 lg:px-8">
-    {% else %}
-        {% assign list_query = 'collection.products' %}
-        <shopify-context type="collection" handle="{{ active_collection }}">
-            <template>
-            <div class="w-full max-w-7xl mx-auto px-4 lg:px-8">
-    {% endif %}
+    <div class="w-full max-w-7xl mx-auto px-6 md:px-12 mt-8 lg:mt-16">
+        <!-- Collection Header -->
+        <header class="flex flex-col mb-12">
+            <h1 class="font-headline text-5xl md:text-7xl font-black text-black tracking-tighter uppercase leading-none">
+                {% if collection.title %}{{ collection.title }}{% else %}The Apothecary{% endif %}
+            </h1>
+            <p class="font-body text-sm md:text-base text-outline uppercase tracking-[0.2em] mt-4 font-bold opacity-70">
+                {{ section.settings.mobile_subtitle }}
+            </p>
+        </header>
 
-        <!-- Editorial Header & Filter/Sort -->
-        <section class="flex flex-col gap-4 mb-8">
-            <div>
-                <h1 class="font-headline text-3xl md:text-5xl font-extrabold text-primary tracking-tight">
-                    {% if collection.title %}{{ collection.title }}{% else %}The Apothecary{% endif %}
-                </h1>
-                <p class="font-body text-sm md:text-base text-on-surface-variant mt-1">{{ section.settings.mobile_subtitle }}</p>
-            </div>
-            
-            <!-- Filter/Sort Bar -->
-            <div class="flex flex-col sm:flex-row items-center gap-4 mt-4 w-full">
-                <!-- Collection Filter -->
-                <div class="relative w-full sm:w-auto flex-grow max-w-sm">
-                    <select id="collectionDropdown" onchange="window.location.href=this.value" class="w-full appearance-none bg-surface-container-low border border-outline-variant/40 text-on-surface rounded-md py-3 px-4 pr-10 font-label text-xs uppercase tracking-widest font-bold hover:border-primary/40 focus:border-primary transition-colors outline-none cursor-pointer shadow-sm">
-                        <option value="/collections/all">All Collections / Category</option>
+        <!-- Premium Filter System -->
+        <div class="flex flex-col md:flex-row items-center gap-6 py-8 border-y border-black/5 mb-12">
+            <div class="flex items-center gap-4 w-full md:w-auto">
+                <span class="font-label text-xs font-black uppercase tracking-widest">Collection</span>
+                <div class="relative flex-grow md:min-w-[240px] tqs-select-wrapper">
+                    <select onchange="window.location.href=this.value" class="tqs-select w-full bg-surface-container-low border-0 text-black font-label text-xs font-bold uppercase tracking-widest px-5 py-4 rounded-md cursor-pointer focus:ring-1 focus:ring-black transition-all">
+                        <option value="/collections/all">Everything</option>
                         {% for c in collections %}
                             <option value="{{ c.url }}" {% if collection.handle == c.handle %}selected{% endif %}>{{ c.title }}</option>
                         {% endfor %}
                     </select>
-                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[20px] text-primary">expand_more</span>
-                </div>
-
-                <!-- Sort By -->
-                <div class="relative w-full sm:w-auto flex-grow max-w-sm">
-                    <select id="sortDropdown" onchange="applySort(this.value)" class="w-full appearance-none bg-surface-container-low border border-outline-variant/40 text-on-surface rounded-md py-3 px-4 pr-10 font-label text-xs uppercase tracking-widest font-bold hover:border-primary/40 focus:border-primary transition-colors outline-none cursor-pointer shadow-sm">
-                        <option value="">Sort By: Default</option>
-                        <option value="TITLE_ASC">Alphabetically, A-Z</option>
-                        <option value="TITLE_DESC">Alphabetically, Z-A</option>
-                        <option value="PRICE_ASC">Price, low to high</option>
-                        <option value="PRICE_DESC">Price, high to low</option>
-                        <option value="CREATED_AT_DESC">Date, new to old</option>
-                        <option value="CREATED_AT_ASC">Date, old to new</option>
-                    </select>
-                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[18px] text-primary">sort</span>
                 </div>
             </div>
 
-            <script>
-                function applySort(value) {
-                    if (!value) return;
-                    const listContext = document.querySelector('shopify-list-context');
-                    if (listContext) {
-                        const parts = value.split('_');
-                        const isDesc = parts[parts.length - 1] === 'DESC';
-                        const sortKey = parts.slice(0, -1).join('_'); // e.g., TITLE, PRICE, CREATED_AT
-                        
-                        listContext.setAttribute('sort-key', sortKey);
-                        listContext.setAttribute('sortKey', sortKey); // just in case for different SDK versions
-                        if(isDesc) {
-                            listContext.setAttribute('reverse', 'true');
-                        } else {
-                            listContext.removeAttribute('reverse');
-                        }
-                    }
-                }
-            </script>
-        </section>
+            <div class="flex items-center gap-4 w-full md:w-auto md:ml-auto">
+                <span class="font-label text-xs font-black uppercase tracking-widest">Sort</span>
+                <div class="relative flex-grow md:min-w-[240px] tqs-select-wrapper">
+                    <select onchange="applySort(this.value)" class="tqs-select w-full bg-surface-container-low border-0 text-black font-label text-xs font-bold uppercase tracking-widest px-5 py-4 rounded-md cursor-pointer focus:ring-1 focus:ring-black transition-all">
+                        <option value="">Featured</option>
+                        <option value="PRICE_ASC">Price: Low to High</option>
+                        <option value="PRICE_DESC">Price: High to Low</option>
+                        <option value="TITLE_ASC">Alphabetical: A-Z</option>
+                        <option value="TITLE_DESC">Alphabetical: Z-A</option>
+                    </select>
+                </div>
+            </div>
+        </div>
 
-        <!-- Product Grid Responsive (2 Mobile, 3 Tablet, 4 Desktop, 5 Large Desktop) -->
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6 mt-6">
-            <shopify-list-context type="product" query="{{ list_query }}" first="24" style="display: contents;">
-                <template>
-                        <!-- Product Card -->
-                        <article class="flex flex-col bg-surface-container-low rounded-xl overflow-hidden relative group custom-product-card shadow-[0_4px_20px_rgba(30,30,30,0.02)] hover:shadow-[0_12px_36px_rgba(30,30,30,0.06)] transition-all duration-300">
-                            <a shopify-attr--href="product.onlineStoreUrl" class="block flex-grow group-link">
-                                <!-- Image Container -->
-                                <div class="aspect-[4/5] relative w-full bg-surface-container-highest overflow-hidden">
+        <!-- Corrected Grid Wrapper -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 md:gap-x-8 gap-y-16">
+            {% if is_global %}
+                 {% assign list_query = 'products' %}
+            {% else %}
+                 {% assign list_query = 'collection.products' %}
+            {% endif %}
+
+            {% if is_global == false %}
+                <shopify-context type="collection" handle="{{ active_collection }}">
+                    <template>
+            {% endif %}
+
+                <shopify-list-context type="product" query="{{ list_query }}" first="48" style="display: contents;">
+                    <template>
+                        <article class="flex flex-col group custom-product-card">
+                            <a shopify-attr--href="product.onlineStoreUrl" class="block flex-grow">
+                                <div class="aspect-[4/5] relative w-full bg-surface-container-highest rounded-2xl overflow-hidden shadow-sm transition-shadow hover:shadow-xl">
                                     <div class="image-wrapper w-full h-full">
                                         <shopify-media query="product.selectedOrFirstAvailableVariant.image"></shopify-media>
                                     </div>
                                     
-                                    <!-- Category/Vendor Badge -->
-                                    <div class="absolute top-2 left-2 flex gap-1 items-start flex-col">
-                                        <div class="bg-secondary-container/90 backdrop-blur-sm text-on-secondary-container font-label text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full shadow-sm">
+                                    <!-- Badges -->
+                                    <div class="absolute top-4 left-4 flex flex-col gap-2">
+                                        <div class="bg-black text-white font-label text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm">
                                             <shopify-data query="product.vendor"></shopify-data>
                                         </div>
-                                        <!-- Dynamic Save Badge -->
-                                        <div class="px-2 py-1 bg-[#ba1a1a] text-white font-label text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm" shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > product.selectedOrFirstAvailableVariant.price.amount ? 'display:block' : 'display:none'">
-                                            SAVE <span shopify-text="Math.round(((product.selectedOrFirstAvailableVariant.compareAtPrice.amount - product.selectedOrFirstAvailableVariant.price.amount) / product.selectedOrFirstAvailableVariant.compareAtPrice.amount) * 100) + '%'">10%</span>
+                                        <div class="bg-red-600 text-white font-label text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm" 
+                                             shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > product.selectedOrFirstAvailableVariant.price.amount ? 'display:block' : 'display:none'">
+                                            SAVE <span shopify-text="Math.round(((product.selectedOrFirstAvailableVariant.compareAtPrice.amount - product.selectedOrFirstAvailableVariant.price.amount) / product.selectedOrFirstAvailableVariant.compareAtPrice.amount) * 100) + '%'"></span>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <!-- Content -->
-                                <div class="p-3 flex flex-col justify-between gap-2 h-full bg-surface-container-lowest">
-                                    <div class="flex flex-col gap-1">
-                                        <h3 class="font-body text-sm md:text-base font-medium text-on-surface leading-tight line-clamp-2 mt-1">
-                                            <shopify-data query="product.title"></shopify-data>
-                                        </h3>
-                                </div>
-                                <div class="flex flex-col gap-3 mt-auto pt-2">
-                                    <div class="flex flex-wrap gap-x-2 gap-y-0.5 items-end">
-                                        <span class="font-headline text-base md:text-lg font-bold text-primary">
+                                <div class="mt-6 flex flex-col gap-2">
+                                    <h3 class="font-headline text-base font-bold text-black uppercase tracking-tight line-clamp-1 group-hover:text-primary transition-colors">
+                                        <shopify-data query="product.title"></shopify-data>
+                                    </h3>
+                                    <div class="flex items-center gap-3">
+                                        <span class="font-headline text-xl font-black text-black">
                                             <shopify-money query="product.selectedOrFirstAvailableVariant.price"></shopify-money>
                                         </span>
-                                        <span class="font-body text-[10px] md:text-sm text-outline line-through opacity-60 pb-0.5" shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > 0 ? 'display:inline' : 'display:none'">
+                                        <span class="font-body text-sm text-outline line-through opacity-40 font-medium" shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > 0 ? 'display:inline' : 'display:none'">
                                             <shopify-money query="product.selectedOrFirstAvailableVariant.compareAtPrice"></shopify-money>
                                         </span>
                                     </div>
-                                    
-                                    <!-- Action Buttons -->
-                                    <div class="flex gap-2 w-full">
-                                        <button onclick="document.querySelector('shopify-store').buyNow(event); event.preventDefault(); event.stopPropagation();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="flex-grow py-2 rounded-full bg-primary text-on-primary font-headline font-bold text-[10px] md:text-xs uppercase tracking-wide hover:opacity-90 flex justify-center items-center shadow-sm transition-transform active:scale-95">
-                                            Buy Now
-                                        </button>
-                                        <button onclick="document.getElementById('cart').addLine(event).showModal(); event.preventDefault(); event.stopPropagation();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" aria-label="Add to cart" class="flex-shrink-0 w-[32px] h-[32px] md:w-[36px] md:h-[36px] bg-transparent border-2 border-primary text-primary rounded-full hover:bg-primary/5 transition-all flex justify-center items-center">
-                                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 0;">shopping_bag</span>
-                                        </button>
-                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </article>
-            </template>
-            <!-- Loading Indicator -->
-            <div shopify-loading-placeholder class="col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5 w-full text-center py-32 text-primary opacity-60">
-                <span class="material-symbols-outlined animate-spin mb-4 text-3xl">refresh</span><br/>
-                Loading Collection...
-            </div>
-        </shopify-list-context>
-    </div>
+                            </a>
 
-    {% if is_global %}
+                            <div class="mt-6 flex gap-3">
+                                <button onclick="document.querySelector('shopify-store').buyNow(event); event.preventDefault(); event.stopPropagation();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="flex-grow bg-black text-white py-4 rounded-full font-headline font-black text-[11px] uppercase tracking-[0.2em] hover:bg-zinc-800 transition-all active:scale-95 shadow-md">
+                                    Buy Now
+                                </button>
+                                <button onclick="document.getElementById('cart').addLine(event).showModal(); event.preventDefault(); event.stopPropagation();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="w-14 h-14 border-2 border-black text-black rounded-full flex items-center justify-center hover:bg-black text-white hover:text-white transition-all">
+                                    <span class="material-symbols-outlined text-[24px]">shopping_bag</span>
+                                </button>
+                            </div>
+                        </article>
+                    </template>
+                    <div shopify-loading-placeholder class="col-span-full py-60 flex flex-col items-center">
+                        <div class="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+                        <p class="font-label text-xs uppercase tracking-[0.4em] font-black mt-8">Restocking...</p>
+                    </div>
+                </shopify-list-context>
+
+            {% if is_global == false %}
+                    </template>
+                </shopify-context>
+            {% endif %}
         </div>
-    {% else %}
-            </div>
-            </template>
-        </shopify-context>
-    {% endif %}
-{% schema %}
-{
-  "name": "TQS Collection Page",
-  "settings": [
-    {
-      "type": "header",
-      "content": "Navigation"
-    },
-    {
-      "type": "text",
-      "id": "brand_text",
-      "label": "Brand Name/Logo Text",
-      "default": "Top Quality Store (TQS)"
-    },
-    {
-      "type": "header",
-      "content": "Collection Settings"
-    },
-    {
-      "type": "text",
-      "id": "mobile_subtitle",
-      "label": "Header Subtitle",
-      "default": "Curated botanical remedies for daily vitality."
+    </div>
+</div>
+
+<script>
+    function applySort(value) {
+        const listContext = document.querySelector('shopify-list-context');
+        if (!listContext) return;
+        if (!value) {
+            listContext.removeAttribute('sort-key');
+            listContext.removeAttribute('reverse');
+            return;
+        }
+        const parts = value.split('_');
+        const isDesc = parts[parts.length - 1] === 'DESC';
+        const sortKey = parts.slice(0, -1).join('_');
+        listContext.setAttribute('sort-key', sortKey);
+        if(isDesc) listContext.setAttribute('reverse', 'true');
+        else listContext.removeAttribute('reverse');
     }
-  ],
-  "presets": [
-    {
-      "name": "TQS Collection Page"
-    }
-  ]
-}
-{% endschema %}
+</script>
