@@ -208,14 +208,10 @@
                                   <span class="bg-secondary-container text-on-surface px-2 py-1 rounded-sm font-label text-[10px] uppercase font-bold tracking-widest shadow-sm">
                                       <shopify-data query="product.vendor"></shopify-data>
                                   </span>
-                                  <shopify-context type="product">
-                                    <template>
-                                      <div class="save-badge bg-error text-white px-2 py-1 rounded-sm font-label text-[10px] uppercase font-bold tracking-widest shadow-sm"
-                                           shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > product.selectedOrFirstAvailableVariant.price.amount ? 'display:block' : 'display:none'">
-                                        SAVE {{ product.selectedOrFirstAvailableVariant.compareAtPrice.amount | minus: product.selectedOrFirstAvailableVariant.price.amount | times: 100 | divided_by: product.selectedOrFirstAvailableVariant.compareAtPrice.amount | round }}%
-                                      </div>
-                                    </template>
-                                  </shopify-context>
+                                  <div class="save-badge bg-error text-white px-2 py-1 rounded-sm font-label text-[10px] uppercase font-bold tracking-widest shadow-sm"
+                                       shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > product.selectedOrFirstAvailableVariant.price.amount ? 'display:block' : 'display:none'">
+                                    SAVE <span shopify-text="Math.round(((product.selectedOrFirstAvailableVariant.compareAtPrice.amount - product.selectedOrFirstAvailableVariant.price.amount) / product.selectedOrFirstAvailableVariant.compareAtPrice.amount) * 100) + '%'">10%</span>
+                                  </div>
                               </div>
 
                               <!-- Overlay Action Buttons for Desktop Hover -->
