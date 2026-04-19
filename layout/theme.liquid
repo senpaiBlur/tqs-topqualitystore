@@ -45,29 +45,37 @@
                         "error": "#ba1a1a",
                         "on-tertiary-container": "#ffffff",
                         "primary-fixed-dim": "#484646",
-                        "surface-dim": "#dadada",
+                        "surface-dim": "#f5ecef",
                         "on-primary-fixed-variant": "#e5e2e1",
                         "inverse-primary": "#c9c6c5",
-                        "on-primary": "#e5e2e1",
-                        "surface-container": "#efeeed",
-                        "surface-variant": "#e3e2e2",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#fcf5f7",
+                        "surface-variant": "#f4ebee",
                         "tertiary-fixed": "#5e5e5e",
                         "tertiary": "#3b3b3b",
                         "surface-container-lowest": "#ffffff",
-                        "surface-container-low": "#f4f3f3",
-                        "inverse-on-surface": "#f1f0f0",
+                        "surface-container-low": "#fdf7f9",
+                        "inverse-on-surface": "#f8f3f4",
                         "error-container": "#ffdad6",
                         "on-tertiary-fixed": "#ffffff",
                         "secondary": "#5f5e5e",
                         "tertiary-container": "#747474",
-                        "primary": "#000000",
-                        "background": "#faf9f9"
+                        "primary": "#1f1b1c",
+                        "background": "#fffbfc"
                     },
                     borderRadius: {
                         DEFAULT: "0.25rem",
                         lg: "0.5rem",
                         xl: "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
                         full: "9999px"
+                    },
+                    boxShadow: {
+                        "glow": "0 0 20px rgba(214, 184, 192, 0.4)",
+                        "soft-glow": "0 8px 30px rgba(224, 194, 202, 0.3)",
+                        "floating": "0 20px 50px rgba(230, 200, 210, 0.25)",
+                        "premium": "0 10px 40px rgba(0, 0, 0, 0.04)"
                     },
                     fontFamily: {
                         headline: ["Be Vietnam Pro", "sans-serif"],
@@ -112,7 +120,8 @@
           font-weight: 700;
           font-family: "Be Vietnam Pro", sans-serif;
           text-transform: uppercase;
-          letter-spacing: 0.1em;
+          letter-spacing: 0.15em;
+          box-shadow: 0 4px 15px rgba(214, 184, 192, 0.3);
         }
         shopify-cart::part(secondary-button) {
           background-color: #ffffff;
