@@ -14,6 +14,18 @@
       "default": "Top Quality Store (TQS)"
     },
     {
+      "type": "link_list",
+      "id": "main_menu",
+      "label": "Header Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_menu",
+      "label": "Footer Menu",
+      "default": "footer"
+    },
+    {
       "type": "header",
       "content": "Aesthetics"
     },
@@ -78,71 +90,92 @@
         pointer-events: none;
         font-size: 20px;
         color: #000;
+        opacity: 0.5;
     }
     .tqs-select {
         appearance: none;
         -webkit-appearance: none;
     }
+
+    /* Mobile Menu Drawer */
+    #mobile-menu-drawer.active {
+        transform: translateX(0);
+    }
 </style>
 
-<!-- TopNavBar (IDENTICAL TO HOME) -->
-<nav class="fixed top-0 w-full z-50 bg-[#faf9f9]/80 backdrop-blur-xl shadow-sm text-[#020202] flex flex-col max-w-none transition-all duration-300 border-b border-outline-variant/10">
+<!-- TopNavBar (Dynamic) -->
+<nav class="fixed top-0 w-full z-50 bg-[#faf9f9]/80 backdrop-blur-xl shadow-sm border-b border-black/5 text-black flex flex-col max-w-none transition-all duration-300">
   <div class="px-6 md:px-12 py-4 flex items-center justify-between">
       <!-- Brand Logo -->
-      <a class="text-2xl font-black tracking-tighter text-[#020202] font-headline hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/">
+      <a class="text-2xl font-black tracking-tighter text-black font-headline hover:opacity-70 transition-opacity" href="/">
           {{ section.settings.brand_text }}
       </a>
-      <!-- Navigation Links (Web) -->
-      <div class="hidden md:flex space-x-8 items-center font-['Be_Vietnam_Pro'] tracking-tight text-sm uppercase font-semibold">
-          <a class="text-[#3c3b3b] hover:text-[#000000] transition-colors hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/">Home</a>
-          <a class="text-[#000000] border-b-2 border-[#000000] pb-1 hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/collections/all">All Products</a>
-          <a class="text-[#3c3b3b] hover:text-[#000000] transition-colors hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/collections/face-wash">Face Wash</a>
-          <a class="text-[#3c3b3b] hover:text-[#000000] transition-colors hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/collections/serums">Serums</a>
-          <a class="text-[#3c3b3b] hover:text-[#000000] transition-colors hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/collections/creams">Creams</a>
+      
+      <!-- Dynamic Navigation Links (Web) -->
+      <div class="hidden lg:flex space-x-8 items-center font-label tracking-tight text-[11px] uppercase font-black">
+          {% for link in linklists[section.settings.main_menu].links %}
+            <a class="{% if link.active %}text-black border-b-2 border-black pb-1{% else %}text-outline hover:text-black{% endif %} transition-all" href="{{ link.url }}">{{ link.title }}</a>
+          {% endfor %}
       </div>
+
       <!-- Trailing Icons -->
-      <div class="flex items-center space-x-4">
-          <a href="/search" aria-label="Search" class="text-[#020202] hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100 p-2">
-              <span class="material-symbols-outlined">search</span>
+      <div class="flex items-center space-x-2 md:space-x-4">
+          <a href="/search" class="text-black p-2 hover:opacity-70 transition-opacity">
+              <span class="material-symbols-outlined text-[22px]">search</span>
           </a>
-          <a href="/account" aria-label="Profile" class="text-[#020202] hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100 p-2">
-              <span class="material-symbols-outlined">person</span>
+          <a href="/account" class="text-black p-2 hover:opacity-70 transition-opacity">
+              <span class="material-symbols-outlined text-[22px]">person</span>
           </a>
-          <button aria-label="Cart" class="text-[#020202] hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100 p-2 relative" onclick="document.getElementById('cart').showModal();">
-              <span class="material-symbols-outlined">shopping_bag</span>
+          <button class="text-black p-2 relative hover:opacity-70 transition-opacity" onclick="document.getElementById('cart').showModal();">
+              <span class="material-symbols-outlined text-[22px]">shopping_bag</span>
+          </button>
+          
+          <!-- Mobile Toggle -->
+          <button class="lg:hidden text-black p-2" onclick="document.getElementById('mobile-menu-drawer').classList.toggle('active')">
+              <span class="material-symbols-outlined text-[22px]">menu</span>
           </button>
       </div>
   </div>
 </nav>
 
-<div class="collection-page-body bg-surface text-on-surface w-full flex flex-col items-center pb-20">
-    {% assign active_collection = collection.handle %}
-    {% if active_collection == blank %}
-        {% assign active_collection = 'all' %}
-    {% endif %}
+<!-- Mobile Menu Drawer Overlay -->
+<div id="mobile-menu-drawer" class="fixed inset-y-0 left-0 w-80 bg-white z-[60] shadow-2xl p-8 transform -translate-x-full transition-transform duration-500 ease-in-out lg:hidden">
+    <div class="flex justify-between items-center mb-12">
+        <span class="text-xl font-black tracking-tighter">{{ section.settings.brand_text }}</span>
+        <button onclick="document.getElementById('mobile-menu-drawer').classList.remove('active')">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <div class="flex flex-col space-y-6">
+        {% for link in linklists[section.settings.main_menu].links %}
+            <a class="font-headline text-2xl font-bold tracking-tighter uppercase" href="{{ link.url }}">{{ link.title }}</a>
+        {% endfor %}
+    </div>
+</div>
 
+<div class="collection-page-body bg-surface text-on-surface w-full flex flex-col items-center">
+    {% assign active_collection = collection.handle %}
+    {% if active_collection == blank %}{% assign active_collection = 'all' %}{% endif %}
     {% assign is_global = false %}
-    {% if active_collection == 'all' %}
-        {% assign is_global = true %}
-    {% endif %}
+    {% if active_collection == 'all' %}{% assign is_global = true %}{% endif %}
 
     <div class="w-full max-w-7xl mx-auto px-6 md:px-12 mt-8 lg:mt-16">
-        <!-- Collection Header -->
+        <!-- Header -->
         <header class="flex flex-col mb-12">
-            <h1 class="font-headline text-5xl md:text-7xl font-black text-black tracking-tighter uppercase leading-none">
+            <h1 class="font-headline text-5xl md:text-8xl font-black text-black tracking-tighter uppercase leading-none">
                 {% if collection.title %}{{ collection.title }}{% else %}The Apothecary{% endif %}
             </h1>
-            <p class="font-body text-sm md:text-base text-outline uppercase tracking-[0.2em] mt-4 font-bold opacity-70">
+            <p class="font-body text-xs md:text-sm text-outline uppercase tracking-[0.3em] mt-6 font-black opacity-60">
                 {{ section.settings.mobile_subtitle }}
             </p>
         </header>
 
-        <!-- Premium Filter System -->
-        <div class="flex flex-col md:flex-row items-center gap-6 py-8 border-y border-black/5 mb-12">
+        <!-- Clean Filter Bar -->
+        <div class="flex flex-col md:flex-row items-center gap-6 py-10 border-y border-black/5 mb-16">
             <div class="flex items-center gap-4 w-full md:w-auto">
-                <span class="font-label text-xs font-black uppercase tracking-widest">Collection</span>
-                <div class="relative flex-grow md:min-w-[240px] tqs-select-wrapper">
-                    <select onchange="window.location.href=this.value" class="tqs-select w-full bg-surface-container-low border-0 text-black font-label text-xs font-bold uppercase tracking-widest px-5 py-4 rounded-md cursor-pointer focus:ring-1 focus:ring-black transition-all">
+                <span class="font-label text-[10px] font-black uppercase tracking-[0.2em] text-outline">Category</span>
+                <div class="relative flex-grow md:min-w-[260px] tqs-select-wrapper">
+                    <select onchange="window.location.href=this.value" class="tqs-select w-full bg-surface-container-low border-0 text-black font-label text-[11px] font-black uppercase tracking-widest px-6 py-5 rounded-lg cursor-pointer focus:ring-1 focus:ring-black transition-all">
                         <option value="/collections/all">Everything</option>
                         {% for c in collections %}
                             <option value="{{ c.url }}" {% if collection.handle == c.handle %}selected{% endif %}>{{ c.title }}</option>
@@ -152,10 +185,10 @@
             </div>
 
             <div class="flex items-center gap-4 w-full md:w-auto md:ml-auto">
-                <span class="font-label text-xs font-black uppercase tracking-widest">Sort</span>
-                <div class="relative flex-grow md:min-w-[240px] tqs-select-wrapper">
-                    <select onchange="applySort(this.value)" class="tqs-select w-full bg-surface-container-low border-0 text-black font-label text-xs font-bold uppercase tracking-widest px-5 py-4 rounded-md cursor-pointer focus:ring-1 focus:ring-black transition-all">
-                        <option value="">Featured</option>
+                <span class="font-label text-[10px] font-black uppercase tracking-[0.2em] text-outline">Sort</span>
+                <div class="relative flex-grow md:min-w-[260px] tqs-select-wrapper">
+                    <select onchange="applySort(this.value)" class="tqs-select w-full bg-surface-container-low border-0 text-black font-label text-[11px] font-black uppercase tracking-widest px-6 py-5 rounded-lg cursor-pointer focus:ring-1 focus:ring-black transition-all">
+                        <option value="">Default Selection</option>
                         <option value="PRICE_ASC">Price: Low to High</option>
                         <option value="PRICE_DESC">Price: High to Low</option>
                         <option value="TITLE_ASC">Alphabetical: A-Z</option>
@@ -165,13 +198,10 @@
             </div>
         </div>
 
-        <!-- Corrected Grid Wrapper -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 md:gap-x-8 gap-y-16">
-            {% if is_global %}
-                 {% assign list_query = 'products' %}
-            {% else %}
-                 {% assign list_query = 'collection.products' %}
-            {% endif %}
+        <!-- Grid -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 md:gap-x-10 gap-y-20 mb-32">
+            {% assign list_query = 'products' %}
+            {% if is_global == false %}{% assign list_query = 'collection.products' %}{% endif %}
 
             {% if is_global == false %}
                 <shopify-context type="collection" handle="{{ active_collection }}">
@@ -182,24 +212,23 @@
                     <template>
                         <article class="flex flex-col group custom-product-card">
                             <a shopify-attr--href="product.onlineStoreUrl" class="block flex-grow">
-                                <div class="aspect-[4/5] relative w-full bg-surface-container-highest rounded-2xl overflow-hidden shadow-sm transition-shadow hover:shadow-xl">
+                                <div class="aspect-[4/5] relative w-full bg-surface-container-highest rounded-3xl overflow-hidden shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:-translate-y-2">
                                     <div class="image-wrapper w-full h-full">
                                         <shopify-media query="product.selectedOrFirstAvailableVariant.image"></shopify-media>
                                     </div>
                                     
-                                    <!-- Badges -->
-                                    <div class="absolute top-4 left-4 flex flex-col gap-2">
-                                        <div class="bg-black text-white font-label text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm">
+                                    <div class="absolute top-5 left-5 flex flex-col gap-2">
+                                        <div class="bg-black text-white font-label text-[9px] font-black uppercase tracking-[0.2em] px-3 py-2 rounded-sm shadow-xl">
                                             <shopify-data query="product.vendor"></shopify-data>
                                         </div>
-                                        <div class="bg-red-600 text-white font-label text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm" 
+                                        <div class="bg-red-600 text-white font-label text-[9px] font-black uppercase tracking-[0.2em] px-3 py-2 rounded-sm shadow-xl" 
                                              shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > product.selectedOrFirstAvailableVariant.price.amount ? 'display:block' : 'display:none'">
                                             SAVE <span shopify-text="Math.round(((product.selectedOrFirstAvailableVariant.compareAtPrice.amount - product.selectedOrFirstAvailableVariant.price.amount) / product.selectedOrFirstAvailableVariant.compareAtPrice.amount) * 100) + '%'"></span>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="mt-6 flex flex-col gap-2">
+                                <div class="mt-8 flex flex-col gap-2 px-1">
                                     <h3 class="font-headline text-base font-bold text-black uppercase tracking-tight line-clamp-1 group-hover:text-primary transition-colors">
                                         <shopify-data query="product.title"></shopify-data>
                                     </h3>
@@ -214,19 +243,19 @@
                                 </div>
                             </a>
 
-                            <div class="mt-6 flex gap-3">
-                                <button onclick="document.querySelector('shopify-store').buyNow(event); event.preventDefault(); event.stopPropagation();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="flex-grow bg-black text-white py-4 rounded-full font-headline font-black text-[11px] uppercase tracking-[0.2em] hover:bg-zinc-800 transition-all active:scale-95 shadow-md">
+                            <div class="mt-8 flex gap-3 px-1">
+                                <button onclick="document.querySelector('shopify-store').buyNow(event); event.preventDefault(); event.stopPropagation();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="flex-grow bg-black text-white py-4 rounded-full font-headline font-black text-[10px] uppercase tracking-[0.2em] group-hover:bg-zinc-800 transition-all active:scale-95 shadow-lg">
                                     Buy Now
                                 </button>
-                                <button onclick="document.getElementById('cart').addLine(event).showModal(); event.preventDefault(); event.stopPropagation();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="w-14 h-14 border-2 border-black text-black rounded-full flex items-center justify-center hover:bg-black text-white hover:text-white transition-all">
+                                <button onclick="document.getElementById('cart').addLine(event).showModal(); event.preventDefault(); event.stopPropagation();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="w-14 h-14 border-2 border-black text-black rounded-full flex items-center justify-center hover:bg-black text-white hover:text-white transition-all shadow-md group-hover:shadow-lg">
                                     <span class="material-symbols-outlined text-[24px]">shopping_bag</span>
                                 </button>
                             </div>
                         </article>
                     </template>
                     <div shopify-loading-placeholder class="col-span-full py-60 flex flex-col items-center">
-                        <div class="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
-                        <p class="font-label text-xs uppercase tracking-[0.4em] font-black mt-8">Restocking...</p>
+                        <div class="w-16 h-16 border-8 border-black border-t-transparent rounded-full animate-spin"></div>
+                        <p class="font-label text-xs uppercase tracking-[0.5em] font-black mt-12 opacity-30">Restocking Collection...</p>
                     </div>
                 </shopify-list-context>
 
@@ -237,6 +266,47 @@
         </div>
     </div>
 </div>
+
+<!-- Dynamic Footer -->
+<footer class="bg-[#f4f3f3] text-black w-full pt-24 pb-12 border-t border-black/5">
+    <div class="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 gap-16">
+        <div class="md:col-span-4 space-y-6">
+            <h4 class="text-3xl font-black tracking-tighter uppercase">{{ section.settings.brand_text }}</h4>
+            <p class="font-body text-base text-outline leading-relaxed max-w-sm">
+                Curated botanical remedies for the modern canvas. Minimalist science, maximalist results.
+            </p>
+        </div>
+        
+        <div class="md:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-12">
+            <div class="flex flex-col space-y-4">
+                <span class="font-label text-xs font-black uppercase tracking-[0.2em] text-outline mb-2">Explore</span>
+                {% for link in linklists[section.settings.main_menu].links %}
+                    <a class="font-label text-sm font-bold hover:text-outline transition-colors" href="{{ link.url }}">{{ link.title }}</a>
+                {% endfor %}
+            </div>
+            <div class="flex flex-col space-y-4">
+                <span class="font-label text-xs font-black uppercase tracking-[0.2em] text-outline mb-2">Policies</span>
+                {% for link in linklists[section.settings.footer_menu].links %}
+                    <a class="font-label text-sm font-bold hover:text-outline transition-colors" href="{{ link.url }}">{{ link.title }}</a>
+                {% endfor %}
+            </div>
+            <div class="flex flex-col space-y-4">
+                <span class="font-label text-xs font-black uppercase tracking-[0.2em] text-outline mb-2">Connect</span>
+                <a class="font-label text-sm font-bold hover:text-outline transition-colors" href="#">Instagram</a>
+                <a class="font-label text-sm font-bold hover:text-outline transition-colors" href="#">WhatsApp</a>
+            </div>
+        </div>
+    </div>
+    <div class="max-w-7xl mx-auto px-6 md:px-12 mt-24 pt-12 border-t border-black/5 flex flex-col md:flex-row justify-between gap-6">
+        <p class="font-label text-[10px] uppercase font-black tracking-[0.2em] opacity-40">
+            &copy; 2024 {{ section.settings.brand_text }}. All Rights Reserved.
+        </p>
+        <div class="flex gap-8">
+             <span class="font-label text-[10px] uppercase font-black tracking-[0.2em] opacity-40">Science-First</span>
+             <span class="font-label text-[10px] uppercase font-black tracking-[0.2em] opacity-40">TQS Quality</span>
+        </div>
+    </div>
+</footer>
 
 <script>
     function applySort(value) {
