@@ -1,0 +1,599 @@
+<style>
+  /* Base Media Reset */
+  shopify-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+  }
+  .ghost-border { border: 1px solid rgba(198, 198, 198, 0.15); }
+  .satin-cta { background: linear-gradient(135deg, #000000, #3c3b3b); }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  
+  /* Details/Summary animation for Mobile Accordeons */
+  details > summary { list-style: none; }
+  details > summary::-webkit-details-marker { display: none; }
+  details[open] summary ~ * { animation: sweep .3s ease-in-out; }
+  @keyframes sweep {
+      0%    {opacity: 0; transform: translateY(-10px)}
+      100%  {opacity: 1; transform: translateY(0)}
+  }
+  .ambient-shadow { box-shadow: 0 10px 30px rgba(10, 31, 68, 0.05); }
+
+  /* Smooth scroll snapping */
+  .gallery-scroll::-webkit-scrollbar {
+      display: none;
+  }
+  .gallery-indicator { transition: all 0.3s; }
+  .snap-center { scroll-snap-align: center; }
+</style>
+
+<shopify-context type="product" handle="{{ product.handle }}">
+  <template>
+    
+    <!-- ==============================================
+         DESKTOP VIEW (Saffron Layout)
+         ============================================== -->
+    <div class="hidden md:flex flex-col min-h-screen bg-surface">
+      <!-- TopNavBar Desktop -->
+      <nav class="fixed top-0 w-full z-50 bg-[#faf9f9]/80 backdrop-blur-xl shadow-sm transition-all duration-300">
+        <div class="flex items-center justify-between px-6 py-4 md:px-12 max-w-7xl mx-auto w-full">
+            <a class="font-headline text-2xl font-black tracking-tighter text-primary" href="/">Top Quality Store (TQS)</a>
+            <div class="hidden md:flex items-center space-x-8 font-headline tracking-tight text-sm uppercase font-semibold">
+                <a class="text-primary hover:opacity-70 transition-colors" href="/collections/all">All Products</a>
+                <a class="text-primary hover:opacity-70 transition-colors" href="/collections/face-wash">Face Wash</a>
+                <a class="text-primary border-b-2 border-primary pb-1" href="/collections/serums">Serums</a>
+                <a class="text-primary hover:opacity-70 transition-colors" href="/collections/creams">Creams</a>
+            </div>
+            <div class="flex items-center space-x-4 text-primary">
+                <a href="/search" class="p-2 hover:opacity-70"><span class="material-symbols-outlined">search</span></a>
+                <button class="p-2 hover:opacity-70 relative" onclick="document.getElementById('cart').showModal();">
+                    <span class="material-symbols-outlined">shopping_bag</span>
+                </button>
+            </div>
+        </div>
+      </nav>
+
+      <main class="flex-grow pt-36 pb-16">
+        <section class="max-w-7xl mx-auto px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
+            
+            <!-- Left: Scrollable Image Gallery -->
+            <div class="lg:col-span-7 flex flex-col relative w-full lg:-ml-8 group shadow-[0_20px_40px_rgba(26,28,28,0.06)] rounded-xl overflow-hidden bg-surface-container-low h-[700px]">
+                
+                <div class="w-full h-full flex overflow-x-auto snap-x snap-mandatory gallery-scroll">
+                    <!-- Loop over product media -->
+                    <shopify-list-context type="media" query="product.media" first="4">
+                        <template>
+                            <div class="w-full shrink-0 snap-center h-full relative">
+                                <shopify-media query="media"></shopify-media>
+                            </div>
+                        </template>
+                        <div shopify-loading-placeholder class="w-full h-full flex items-center justify-center">
+                            Loading imagery...
+                        </div>
+                    </shopify-list-context>
+                </div>
+
+                <!-- Swipe instruction overlay -->
+                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-surface-container-lowest/80 backdrop-blur-md px-4 py-2 rounded-full ghost-border flex items-center gap-2 pointer-events-none">
+                    <span class="material-symbols-outlined text-[16px] text-outline">swipe_left</span>
+                    <span class="font-label text-xs uppercase tracking-widest text-outline font-bold">Scroll Images</span>
+                </div>
+                
+                <!-- Bestseller Badge -->
+                <div class="absolute top-6 right-6 bg-surface-container-lowest/90 backdrop-blur-sm rounded-full px-4 py-2 ghost-border">
+                    <span class="font-label text-xs font-semibold text-primary uppercase tracking-widest">{{ section.settings.bestseller_badge | default: 'Bestseller' }}</span>
+                </div>
+            </div>
+
+            <!-- Right: Product Info -->
+            <div class="lg:col-span-5 flex flex-col pt-12">
+                <nav class="flex items-center space-x-2 text-sm font-label text-secondary-fixed-dim mb-6">
+                    <a class="hover:text-primary transition-colors" href="/">Home</a>
+                    <span>/</span>
+                    <span class="text-on-surface uppercase"><shopify-data query="product.vendor"></shopify-data></span>
+                </nav>
+                
+                <h1 class="font-headline font-bold text-primary leading-tight tracking-[-0.02em] mb-4" style="font-size: {{ section.settings.title_size }}px;">
+                    <shopify-data query="product.title"></shopify-data>
+                </h1>
+                
+
+                <div class="flex items-baseline space-x-4 mb-8">
+                    <div class="flex items-center space-x-3">
+                        <span class="font-headline font-semibold text-primary" style="font-size: {{ section.settings.price_size }}px;">
+                            <shopify-money query="product.selectedOrFirstAvailableVariant.price"></shopify-money>
+                        </span>
+                        
+                        {% assign current_variant = product.selected_or_first_available_variant %}
+                        {% if current_variant.compare_at_price > current_variant.price %}
+                            <span class="font-headline text-outline line-through" style="font-size: calc({{ section.settings.price_size }}px * 0.55);">
+                                <shopify-money query="product.selectedOrFirstAvailableVariant.compareAtPrice"></shopify-money>
+                            </span>
+                            
+                            {% assign discount = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round %}
+                            <span class="font-label text-[11px] font-bold bg-error text-white px-2.5 py-1 rounded-sm uppercase tracking-widest flex items-center shadow-sm">
+                                Save {{ discount }}%
+                            </span>
+                        {% endif %}
+                    </div>
+                    <span class="font-label text-xs font-semibold bg-primary-container text-on-primary-container px-2 py-1 rounded-sm uppercase tracking-wide">{{ section.settings.in_stock_text | default: 'In Stock' }}</span>
+                </div>
+
+                <shopify-variant-selector></shopify-variant-selector>
+
+                <div class="font-body leading-relaxed text-on-surface-variant mb-10 pt-4 border-t border-outline-variant/30" style="font-size: {{ section.settings.description_size }}px;">
+                    <shopify-data query="product.description"></shopify-data>
+                </div>
+
+                <!-- Dynamic Accordions Blocks -->
+                {% for block in section.blocks %}
+                  {% if block.type == 'accordion' %}
+                    <details class="group bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 ambient-shadow mb-6" {{ block.shopify_attributes }}>
+                        <summary class="flex justify-between items-center cursor-pointer list-none">
+                            <span class="font-headline text-lg font-bold text-primary">{{ block.settings.title }}</span>
+                            <span class="material-symbols-outlined text-primary group-open:rotate-180 transition-transform duration-300">expand_more</span>
+                        </summary>
+                        <div class="mt-4 font-body text-secondary leading-relaxed pt-4 border-t border-surface-container-high" style="font-size: {{ section.settings.description_size }}px;">
+                            {{ block.settings.content }}
+                            {% if block.settings.accordion_image %}
+                                <div class="mt-4 rounded-xl overflow-hidden w-full h-auto">
+                                   <img src="{{ block.settings.accordion_image | img_url: '800x' }}" class="w-full rounded-xl" alt="Accordion image">
+                                </div>
+                            {% endif %}
+                        </div>
+                    </details>
+                  {% endif %}
+                {% endfor %}
+
+                <!-- Custom Action Buttons -->
+                <div class="flex flex-col space-y-4 mb-12">
+                    <!-- Row 1: Primary Actions -->
+                    <div class="flex gap-4 w-full">
+                        <button onclick="document.querySelector('shopify-store').buyNow(event)" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="flex-grow py-4 rounded-full satin-cta text-on-primary font-headline font-bold text-sm uppercase tracking-wide hover:opacity-90 flex justify-center items-center shadow-lg transition-transform active:scale-95">
+                            {{ section.settings.buy_now_text | default: 'Buy Now' }}
+                        </button>
+                        <button onclick="document.getElementById('cart').addLine(event).showModal();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" aria-label="Add to cart" class="flex-shrink-0 w-[52px] h-[52px] bg-transparent border-2 border-primary text-primary rounded-full hover:bg-primary/5 transition-all flex justify-center items-center">
+                            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">shopping_bag</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Paid Order (SAVE 10%) -->
+                    <button onclick="document.querySelector('shopify-store').buyNow(event)" class="w-full relative flex justify-center items-center px-8 py-4 bg-surface-container-high border-[1.5px] border-outline-variant text-on-surface font-headline font-bold text-sm uppercase tracking-wide rounded-full hover:bg-surface-container-highest transition-colors active:scale-95">
+                        {{ section.settings.paid_order_text | default: 'Paid Order' }}
+                        <span class="absolute -top-2 -right-1 bg-error text-white px-2.5 py-1 text-[10px] rounded-full shadow-md font-bold tracking-widest">{{ section.settings.paid_order_badge | default: 'SAVE 10%' }}</span>
+                    </button>
+                    
+                    <!-- WhatsApp -->
+                    <a href="https://wa.me/{{ section.settings.whatsapp_number }}?text={{ section.settings.whatsapp_text | url_encode }}" target="_blank" class="w-full flex justify-center items-center px-6 py-4 bg-[#25D366] text-white font-headline font-bold text-sm uppercase tracking-wide rounded-full hover:opacity-90 transition-opacity gap-2 shadow-[0_4px_12px_rgba(37,211,102,0.3)] active:scale-95">
+                        {{ section.settings.whatsapp_text | default: 'Order on WhatsApp' }}
+                    </a>
+                </div>
+
+                <!-- Badges -->
+                <div class="pt-8 border-t border-surface-container-high">
+                    <span class="block font-label text-xs font-semibold uppercase tracking-widest text-secondary-fixed-dim mb-6 text-center lg:text-left">{{ section.settings.badges_title | default: 'High Grade Synthetics' }}</span>
+                    <div class="flex items-center justify-center lg:justify-start space-x-8 opacity-60 grayscale">
+                        <span class="font-headline font-bold text-xl tracking-tighter">{{ section.settings.trust_badge_1 | default: 'VEGAN' }}</span>
+                        <span class="font-headline font-medium text-lg italic">{{ section.settings.trust_badge_2 | default: 'Pure' }}</span>
+                        <span class="font-headline font-bold text-xl tracking-widest uppercase">{{ section.settings.trust_badge_3 | default: 'Clinically Tested' }}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+      </main>
+    </div>
+
+
+    <!-- ==============================================
+         MOBILE VIEW (Prana Layout)
+         ============================================== -->
+    <div class="block md:hidden bg-surface pb-32">
+      <!-- Mobile Native Header -->
+      <header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md flex justify-between items-center px-6 h-16 border-b border-slate-100">
+          <a href="/" class="text-primary active:scale-95 transition-transform flex items-center justify-center">
+              <span class="material-symbols-outlined text-2xl">arrow_back</span>
+          </a>
+          <h1 class="text-primary font-headline font-black tracking-[0.2em] uppercase text-lg">TQS</h1>
+          <button class="text-primary active:scale-95 transition-transform flex items-center justify-center relative" onclick="document.getElementById('cart').showModal();">
+              <span class="material-symbols-outlined text-2xl">shopping_bag</span>
+          </button>
+      </header>
+
+      <main class="pt-16">
+          
+          <!-- Scrollable Image Gallery Mobile -->
+          <section class="relative w-full h-[574px] bg-surface-container-low overflow-hidden rounded-b-[2rem]">
+              <div class="w-full h-full flex overflow-x-auto snap-x snap-mandatory gallery-scroll">
+                  <shopify-list-context type="media" query="product.media" first="4">
+                      <template>
+                          <div class="w-full shrink-0 snap-center h-full relative">
+                              <shopify-media class="w-full h-full object-cover object-center absolute inset-0" query="media"></shopify-media>
+                          </div>
+                      </template>
+                      <div shopify-loading-placeholder class="w-full h-full flex items-center justify-center">
+                          Loading imagery...
+                      </div>
+                  </shopify-list-context>
+              </div>
+              
+              <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-surface-container-low to-transparent pointer-events-none"></div>
+              
+              <!-- Indicator overlay -->
+              <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/20 backdrop-blur-md px-3 py-1 rounded-full pointer-events-none">
+                  <span class="material-symbols-outlined text-white text-[16px]">swipe</span>
+                  <span class="text-white text-[10px] font-bold tracking-widest uppercase">Swipe</span>
+              </div>
+              
+              <div class="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full flex items-center gap-2 shadow-sm border border-slate-100">
+                  <span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">science</span>
+                  <span class="font-headline text-[10px] tracking-widest uppercase font-bold text-on-surface">{{ section.settings.curated_pick_badge | default: 'Curated Pick' }}</span>
+              </div>
+          </section>
+
+          <section class="px-8 pt-10 pb-8 relative z-10 -mt-6 bg-surface rounded-t-[2rem]">
+              <h2 class="font-headline font-extrabold text-primary leading-none tracking-tight mb-2" style="font-size: calc({{ section.settings.title_size }}px * 0.75);">
+                  <shopify-data query="product.title"></shopify-data>
+              </h2>
+              <p class="font-body text-sm text-secondary font-semibold tracking-widest mb-8 uppercase">
+                  <shopify-data query="product.vendor"></shopify-data>
+              </p>
+              
+              <div class="flex justify-between items-end">
+                  <div class="flex flex-col gap-1.5">
+                      <div class="flex items-center space-x-2">
+                          <span class="font-headline font-bold text-primary" style="font-size: {{ section.settings.mobile_price_size | default: 24 }}px;">
+                              <shopify-money query="product.selectedOrFirstAvailableVariant.price"></shopify-money>
+                          </span>
+                          
+                          {% assign current_variant = product.selected_or_first_available_variant %}
+                          {% if current_variant.compare_at_price > current_variant.price %}
+                              <span class="font-headline text-outline line-through" style="font-size: calc({{ section.settings.mobile_price_size | default: 24 }}px * 0.6);">
+                                  <shopify-money query="product.selectedOrFirstAvailableVariant.compareAtPrice"></shopify-money>
+                              </span>
+                          {% endif %}
+                      </div>
+                      
+                      {% if current_variant.compare_at_price > current_variant.price %}
+                          {% assign discount = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round %}
+                          <div>
+                              <span class="font-label text-[10px] font-bold bg-error text-white px-2 py-1 rounded-sm uppercase tracking-widest shadow-sm">
+                                  Save {{ discount }}%
+                              </span>
+                          </div>
+                      {% endif %}
+                  </div>
+              </div>
+          </section>
+
+          <section class="px-6 py-4 bg-surface-container-low space-y-4 rounded-t-[2rem]">
+              
+              <!-- Details Accordion -->
+              <details class="group bg-white rounded-2xl p-6 ambient-shadow">
+                  <summary class="flex justify-between items-center cursor-pointer list-none">
+                      <span class="font-headline text-lg font-bold text-primary">Details & Description</span>
+                      <span class="material-symbols-outlined text-primary group-open:rotate-180 transition-transform duration-300">expand_more</span>
+                  </summary>
+                  <div class="mt-4 font-body text-secondary leading-relaxed pt-4 border-t border-surface-container-high" style="font-size: {{ section.settings.description_size }}px;">
+                      <shopify-data query="product.description"></shopify-data>
+                  </div>
+              </details>
+
+              <!-- Dynamic Accordions Blocks Mobile -->
+              {% for block in section.blocks %}
+                {% if block.type == 'accordion' %}
+                  <details class="group bg-white rounded-2xl p-6 ambient-shadow mt-4" {{ block.shopify_attributes }}>
+                      <summary class="flex justify-between items-center cursor-pointer list-none">
+                          <span class="font-headline text-lg font-bold text-primary">{{ block.settings.title }}</span>
+                          <span class="material-symbols-outlined text-primary group-open:rotate-180 transition-transform duration-300">expand_more</span>
+                      </summary>
+                      <div class="mt-4 font-body text-secondary leading-relaxed pt-4 border-t border-surface-container-high" style="font-size: {{ section.settings.description_size }}px;">
+                          {{ block.settings.content }}
+                          {% if block.settings.accordion_image %}
+                              <div class="mt-4 rounded-xl overflow-hidden w-full h-auto">
+                                 <img src="{{ block.settings.accordion_image | img_url: '600x' }}" class="w-full rounded-xl" alt="Accordion image">
+                              </div>
+                          {% endif %}
+                      </div>
+                  </details>
+                {% endif %}
+              {% endfor %}
+
+              <!-- Main Mobile Control Buttons -->
+              <div class="bg-white rounded-2xl p-6 ambient-shadow mt-4 mb-4 flex flex-col gap-4">
+                  <!-- Paid Order (SAVE 10%) -->
+                  <button onclick="document.querySelector('shopify-store').buyNow(event)" class="w-full relative flex justify-center items-center px-8 py-4 bg-surface-container-high border-[1.5px] border-outline-variant text-on-surface font-headline font-bold text-sm uppercase tracking-wide rounded-full active:scale-95 transition-transform">
+                      {{ section.settings.paid_order_text | default: 'Paid Order' }}
+                      <span class="absolute -top-2 -right-1 bg-error text-white px-2.5 py-1 text-[10px] rounded-full shadow-md font-bold tracking-widest">{{ section.settings.paid_order_badge | default: 'SAVE 10%' }}</span>
+                  </button>
+                  
+                  <!-- WhatsApp -->
+                  <a href="https://wa.me/{{ section.settings.whatsapp_number }}?text={{ section.settings.whatsapp_text | url_encode }}" target="_blank" class="w-full flex justify-center items-center px-6 py-4 bg-[#25D366] text-white font-headline font-bold text-sm uppercase tracking-wide rounded-full active:scale-95 transition-transform gap-2">
+                      {{ section.settings.whatsapp_text | default: 'Order on WhatsApp' }}
+                  </a>
+              </div>
+          </section>
+
+      </main>
+
+      <!-- Sticky Mobile Bottom Sheet (Compact Primary actions) -->
+      <div class="fixed bottom-0 w-full bg-white/90 backdrop-blur-xl px-4 py-4 flex gap-3 z-50 rounded-t-[1.5rem] border-t border-slate-100 shadow-[0_-10px_40px_rgba(10,31,68,0.08)]">
+          <button class="flex-shrink-0 bg-surface-container text-primary font-headline font-bold text-sm tracking-wide w-14 rounded-xl flex items-center justify-center hover:bg-surface-container-high transition-colors"
+                  onclick="document.getElementById('cart').addLine(event).showModal();"
+                  shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale">
+              <span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+          </button>
+          
+          <button class="flex-grow satin-cta text-on-primary font-headline font-bold text-sm tracking-wide py-4 px-6 rounded-xl shadow-lg active:scale-95 transition-all"
+                  onclick="document.querySelector('shopify-store').buyNow(event)"
+                  shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale">
+              {{ section.settings.buy_now_text | default: 'Buy Now' }}
+          </button>
+      </div>
+    </div>
+
+
+    <!-- ==============================================
+         GLOBAL REVIEWS SECTION (Both Layouts)
+         ============================================== -->
+    <section class="py-16 md:py-24 bg-surface w-full mt-4 pb-20 md:pb-32">
+        <div class="px-6 md:px-12 mb-8 max-w-7xl mx-auto border-t border-surface-container-high pt-16">
+            <h3 class="font-headline text-3xl font-bold text-primary">{{ section.settings.community_wisdom_title | default: 'Community Wisdom' }}</h3>
+            <p class="font-body text-sm text-outline mt-2">{{ section.settings.community_wisdom_subtitle | default: 'Verified experiences from the modern apothecary.' }}</p>
+        </div>
+        <div class="flex overflow-x-auto gap-6 px-6 md:px-12 pb-12 snap-x no-scrollbar max-w-7xl mx-auto gallery-scroll">
+            
+            {% assign has_reviews = false %}
+            {% for block in section.blocks %}
+              {% if block.type == 'review' %}
+                {% assign has_reviews = true %}
+                <div class="min-w-[300px] w-[300px] bg-surface-container-low p-6 rounded-3xl ambient-shadow snap-center flex flex-col justify-between" {{ block.shopify_attributes }}>
+                    <div>
+                        <div class="flex text-primary mb-4">
+                            {% assign rating = block.settings.rating | default: 5 %}
+                            {% for i in (1..rating) %}
+                              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            {% endfor %}
+                            {% assign empty_stars = 5 | minus: rating %}
+                            {% if empty_stars > 0 %}
+                              {% for i in (1..empty_stars) %}
+                                <span class="material-symbols-outlined text-sm">star</span>
+                              {% endfor %}
+                            {% endif %}
+                        </div>
+                        <p class="font-body text-sm text-secondary italic leading-relaxed">"{{ block.settings.review_text }}"</p>
+                        {% if block.settings.review_image %}
+                          <div class="mt-4 w-full h-36 rounded-xl overflow-hidden">
+                              <img src="{{ block.settings.review_image | img_url: '400x' }}" alt="Review Image" class="w-full h-full object-cover">
+                          </div>
+                        {% endif %}
+                    </div>
+                    <div class="mt-6 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-headline font-bold text-xs">{{ block.settings.author_initial }}</div>
+                        <span class="font-headline font-bold text-sm text-primary">{{ block.settings.author_name }}</span>
+                    </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+            {% if has_reviews == false %}
+              <div class="p-6 text-center text-outline w-full" style="grid-column: 1 / -1;">
+                Add reviews from the Theme Editor.
+              </div>
+            {% endif %}
+            
+        </div>
+    </section>
+
+  </template>
+  <div shopify-loading-placeholder class="w-full h-screen flex flex-col justify-center items-center bg-surface">
+      <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      <div class="mt-8 text-tertiary-fixed-dim font-headline font-bold text-lg uppercase tracking-widest">
+         Loading Protocol...
+      </div>
+  </div>
+</shopify-context>
+
+{% schema %}
+{
+  "name": "TQS Product Storefront",
+  "settings": [
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 24,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Desktop Title Font Size",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Desktop Price Font Size",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "mobile_price_size",
+      "min": 16,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Mobile Price Font Size",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "min": 10,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Description Font Size",
+      "default": 16
+    },
+    {
+      "type": "text",
+      "id": "buy_now_text",
+      "label": "Primary Button Text",
+      "default": "Buy Now"
+    },
+    {
+      "type": "text",
+      "id": "paid_order_text",
+      "label": "Promotion Button Text",
+      "default": "Paid Order"
+    },
+    {
+      "type": "text",
+      "id": "paid_order_badge",
+      "label": "Promotion Badge Text",
+      "default": "SAVE 10%"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_text",
+      "label": "WhatsApp Button Text",
+      "default": "Order on WhatsApp"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_number",
+      "label": "WhatsApp Number",
+      "default": "918506934982"
+    },
+    {
+      "type": "text",
+      "id": "bestseller_badge",
+      "label": "Desktop Bestseller Badge",
+      "default": "Bestseller"
+    },
+    {
+      "type": "text",
+      "id": "curated_pick_badge",
+      "label": "Mobile Curated Pick Badge",
+      "default": "Curated Pick"
+    },
+    {
+      "type": "text",
+      "id": "in_stock_text",
+      "label": "In Stock Label Text",
+      "default": "In Stock"
+    },
+    {
+      "type": "text",
+      "id": "badges_title",
+      "label": "Badges Title",
+      "default": "High Grade Synthetics"
+    },
+    {
+      "type": "text",
+      "id": "trust_badge_1",
+      "label": "Trust Badge 1",
+      "default": "VEGAN"
+    },
+    {
+      "type": "text",
+      "id": "trust_badge_2",
+      "label": "Trust Badge 2",
+      "default": "Pure"
+    },
+    {
+      "type": "text",
+      "id": "trust_badge_3",
+      "label": "Trust Badge 3",
+      "default": "Clinically Tested"
+    },
+    {
+      "type": "text",
+      "id": "community_wisdom_title",
+      "label": "Reviews Section Title",
+      "default": "Community Wisdom"
+    },
+    {
+      "type": "text",
+      "id": "community_wisdom_subtitle",
+      "label": "Reviews Section Subtitle",
+      "default": "Verified experiences from the modern apothecary."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "accordion",
+      "name": "Accordion (Details)",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Accordion Title",
+          "default": "How to Use"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Add information here.</p>"
+        },
+        {
+          "type": "image_picker",
+          "id": "accordion_image",
+          "label": "Accordion Image (Optional)"
+        }
+      ]
+    },
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "review_image",
+          "label": "Review Image"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "label": "Rating",
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review Text",
+          "default": "A subtle but profound difference in texture. My skin feels deeply nourished and the glow is absolutely unreal."
+        },
+        {
+          "type": "text",
+          "id": "author_initial",
+          "label": "Author Initial",
+          "default": "M"
+        },
+        {
+          "type": "text",
+          "id": "author_name",
+          "label": "Author Name",
+          "default": "Meera T."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "TQS Product Storefront",
+      "blocks": [
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" }
+      ]
+    }
+  ]
+}
+{% endschema %}

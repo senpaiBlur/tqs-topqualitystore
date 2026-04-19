@@ -1,0 +1,389 @@
+import os
+
+schema = """
+{% schema %}
+{
+  "name": "TQS About Page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero Section"
+    },
+    { "type": "image_picker", "id": "hero_image", "label": "Hero Image" },
+    { "type": "text", "id": "hero_subtitle", "label": "Subtitle", "default": "The Modern Apothecary" },
+    { "type": "text", "id": "hero_title", "label": "Title", "default": "Rooted in Ayurveda." },
+    { "type": "text", "id": "hero_title_highlight", "label": "Title Highlight", "default": "Backed by Science." },
+    { "type": "textarea", "id": "hero_text", "label": "Description", "default": "Discover the journey of bringing ancient botanical wisdom into the rigorous light of modern scientific validation. We don't just formulate; we curate sanctuaries of well-being." },
+
+    {
+      "type": "header",
+      "content": "Our Story Section (Desktop Only)"
+    },
+    { "type": "image_picker", "id": "story_image", "label": "Story Image" },
+    { "type": "text", "id": "story_title", "label": "Title", "default": "The Alchemy of Tradition" },
+    { "type": "textarea", "id": "story_p1", "label": "Paragraph 1", "default": "Veda Modern was born from a simple, profound realization: the most potent solutions for modern wellness were documented thousands of years ago." },
+    { "type": "textarea", "id": "story_p2", "label": "Paragraph 2", "default": "Our mission is to strip away the clinical sterility of contemporary supplements and return to the root." },
+    { "type": "textarea", "id": "story_highlight", "label": "Highlight Text", "default": "We believe that true healing is a ritual, not just a routine. It requires reverence for the earth and rigorous testing in the lab." },
+
+    {
+      "type": "header",
+      "content": "Vision & Mission Section"
+    },
+    { "type": "text", "id": "vision_title", "label": "Vision Title", "default": "The Future of Wellness" },
+    { "type": "textarea", "id": "vision_text", "label": "Vision Text", "default": "To create a world where preventive, holistic health is the standard, not the alternative." },
+    { "type": "text", "id": "mission_title", "label": "Mission Title", "default": "Ancient Roots, Modern Results" },
+    { "type": "textarea", "id": "mission_text", "label": "Mission Text", "default": "To ethically source the highest quality Ayurvedic herbs and subject them to uncompromising modern clinical trials." },
+
+    {
+      "type": "header",
+      "content": "Standards Grid"
+    },
+    { "type": "text", "id": "standards_title", "label": "Title", "default": "The Standard of Purity" },
+    { "type": "text", "id": "standards_subtitle", "label": "Subtitle (Desktop)", "default": "Uncompromising quality at every stage, from soil to sanctuary." },
+
+    {
+      "type": "header",
+      "content": "Founder Section"
+    },
+    { "type": "text", "id": "founder_label", "label": "Label", "default": "From The Founder" },
+    { "type": "image_picker", "id": "founder_image", "label": "Founder Image" },
+    { "type": "textarea", "id": "founder_quote", "label": "Quote", "default": "True wellness is not a destination to reach, but a daily return to our natural state of vibrant balance." },
+    { "type": "textarea", "id": "founder_text", "label": "Description (Desktop Only)", "default": "Every formula we create is a personal commitment to your vitality." },
+    { "type": "text", "id": "founder_name", "label": "Name", "default": "Amara Desai" },
+    { "type": "text", "id": "founder_title", "label": "Job Title", "default": "Founder & Formulator" },
+
+    {
+      "type": "header",
+      "content": "Timeline Section"
+    },
+    { "type": "text", "id": "timeline_title", "label": "Timeline Title", "default": "Our Journey" },
+
+    {
+      "type": "header",
+      "content": "CTA Section (Desktop Only)"
+    },
+    { "type": "text", "id": "cta_title", "label": "CTA Title", "default": "Begin Your Ritual" },
+    { "type": "text", "id": "cta_text", "label": "CTA Text", "default": "Experience the synergy of ancient botanical wisdom and clinical precision. Your sanctuary awaits." },
+    { "type": "text", "id": "cta_button", "label": "Button Text", "default": "Explore Products" },
+    { "type": "url", "id": "cta_link", "label": "Button Link" }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Standard Feature",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Material Icon Name", "default": "eco" },
+        { "type": "text", "id": "title", "label": "Title", "default": "100% Herbal" },
+        { "type": "textarea", "id": "text", "label": "Description", "default": "Sourced directly from organic farms." }
+      ]
+    },
+    {
+      "type": "timeline",
+      "name": "Timeline Event",
+      "settings": [
+        { "type": "text", "id": "year", "label": "Year", "default": "2018" },
+        { "type": "text", "id": "title", "label": "Title (Desktop Only)", "default": "The Seed" },
+        { "type": "textarea", "id": "text", "label": "Description", "default": "A personal health crisis leads to the profound discovery of traditional Ayurvedic healing protocols." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "TQS About Page"
+    }
+  ]
+}
+{% endschema %}
+"""
+
+desktop_html = """
+<div class="hidden md:block bg-surface text-on-surface font-body antialiased">
+    <!-- Hero Section -->
+    <section class="relative min-h-[870px] flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0 bg-surface-container-low">
+            {% if section.settings.hero_image %}
+                <img src="{{ section.settings.hero_image | img_url: 'master' }}" alt="{{ section.settings.hero_image.alt }}" class="w-full h-full object-cover object-center opacity-40">
+            {% else %}
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvyBXUDFGWI2uEkJgN_ZiN7Hm0reji8N0VpvNZEiM6QUCz_4oiIivPRRMNN7FkaglOWKqBs8SxOiO5A73ayoV_-4mZK_yPm5yn7PgnVOMdtV9lC7dWuy3cnoCIz8B1jTFSOM0arRNCvZHogGW6I5NcapJtCkDNsgQthhbxkFu2IzFd53bRvJvAyySLhOxA9YNZ3YmKNhpkgsqoGk06lJ5VkHUIWRgGWMwKX5hqnPEtAYA4vPvIJzKjIU3C1FXESE8Hp0KGiSUQXC_g" alt="Default Hero Image" class="w-full h-full object-cover object-center opacity-40">
+            {% endif %}
+            <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/80 to-transparent"></div>
+        </div>
+        <div class="relative z-10 max-w-4xl mx-auto px-6 text-center pt-20">
+            <span class="font-label text-sm uppercase tracking-[0.2em] text-primary font-semibold mb-6 block">{{ section.settings.hero_subtitle }}</span>
+            <h1 class="font-headline text-7xl lg:text-8xl font-bold tracking-tighter text-on-surface mb-8 leading-[1.1]">
+                {{ section.settings.hero_title }}<br/>
+                <span class="text-primary">{{ section.settings.hero_title_highlight }}</span>
+            </h1>
+            <p class="font-body text-xl text-on-surface-variant max-w-2xl mx-auto leading-relaxed mb-12">
+                {{ section.settings.hero_text | newline_to_br }}
+            </p>
+        </div>
+    </section>
+
+    <!-- Our Story - Asymmetric Layout -->
+    <section class="py-32 bg-surface px-6">
+        <div class="max-w-[1440px] mx-auto">
+            <div class="grid grid-cols-12 gap-24 items-center">
+                <div class="col-span-5 col-start-2 relative">
+                    <div class="absolute -inset-4 bg-surface-container-low rounded-3xl -z-10 transform -rotate-2"></div>
+                    {% if section.settings.story_image %}
+                        <img src="{{ section.settings.story_image | img_url: '1000x' }}" alt="Story Image" class="w-full h-[500px] object-cover rounded-2xl shadow-[0_40px_60px_-15px_rgba(38,71,36,0.08)]">
+                    {% else %}
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTv-55y_AdI2cfWYi9a-CVpNiMoYdi1yWxZQ-kgEqrLhxmcPFN-X04lGmkCYohAxeTsseekKn_VOSI7QoPBblqanVJu9W6cMM-_3d-uge2gkj167uc9AoB8nit6UOjK-urCOVji7l0VXawqvXCW4e1L1d1LKr7oyz5QboPCFdtQwBsN9LBZwDl9SXzWHH6zCdi1J9gWsgcNCbg16AYLRKTCq4Su_7cqWrt_ZRjHMvFzOxgFArHLCqu4CYnXsB_JKRr3agDXxZcG8bP" alt="Default Story Image" class="w-full h-[500px] object-cover rounded-2xl shadow-[0_40px_60px_-15px_rgba(38,71,36,0.08)]">
+                    {% endif %}
+                </div>
+                <div class="col-span-5">
+                    <h2 class="font-headline text-5xl font-bold tracking-tight mb-8">{{ section.settings.story_title }}</h2>
+                    <div class="space-y-6 font-body text-on-surface-variant text-lg leading-relaxed">
+                        <p>{{ section.settings.story_p1 }}</p>
+                        <p>{{ section.settings.story_p2 }}</p>
+                        <p class="font-medium text-primary">{{ section.settings.story_highlight }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vision & Mission - Glass/Bento approach -->
+    <section class="py-24 bg-surface-container-low px-6 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-secondary-container/30 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+        <div class="max-w-[1200px] mx-auto relative z-10">
+            <div class="grid grid-cols-2 gap-12">
+                <!-- Vision Card -->
+                <div class="bg-surface/80 backdrop-blur-2xl p-14 rounded-[2rem] shadow-[0_30px_50px_-20px_rgba(38,71,36,0.05)] border border-white/40">
+                    <div class="w-14 h-14 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center mb-8">
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">visibility</span>
+                    </div>
+                    <h3 class="font-headline text-2xl font-bold mb-4">{{ section.settings.vision_title }}</h3>
+                    <p class="font-body text-on-surface-variant leading-relaxed">
+                        {{ section.settings.vision_text }}
+                    </p>
+                </div>
+                <!-- Mission Card -->
+                <div class="bg-surface-container-lowest p-14 rounded-[2rem] shadow-[0_30px_50px_-20px_rgba(38,71,36,0.05)] translate-y-12">
+                    <div class="w-14 h-14 bg-tertiary-container text-on-tertiary-container rounded-full flex items-center justify-center mb-8">
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">spa</span>
+                    </div>
+                    <h3 class="font-headline text-2xl font-bold mb-4">{{ section.settings.mission_title }}</h3>
+                    <p class="font-body text-on-surface-variant leading-relaxed">
+                        {{ section.settings.mission_text }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Grid -->
+    <section class="py-32 bg-surface px-6">
+        <div class="max-w-[1440px] mx-auto text-center mb-20">
+            <h2 class="font-headline text-5xl font-bold tracking-tight mb-6">{{ section.settings.standards_title }}</h2>
+            <p class="font-body text-lg text-on-surface-variant max-w-2xl mx-auto">{{ section.settings.standards_subtitle }}</p>
+        </div>
+        <div class="max-w-[1200px] mx-auto grid grid-cols-4 gap-6">
+            {% for block in section.blocks %}
+              {% if block.type == 'feature' %}
+                <div class="bg-surface-container-lowest p-8 rounded-3xl hover:-translate-y-2 transition-transform duration-500 shadow-[0_20px_40px_-15px_rgba(38,71,36,0.04)]" {{ block.shopify_attributes }}>
+                    <div class="w-12 h-12 bg-secondary-container/50 text-secondary rounded-full flex items-center justify-center mb-6">
+                        <span class="material-symbols-outlined">{{ block.settings.icon }}</span>
+                    </div>
+                    <h4 class="font-headline text-xl font-bold mb-3">{{ block.settings.title }}</h4>
+                    <p class="font-body text-sm text-on-surface-variant leading-relaxed">{{ block.settings.text }}</p>
+                </div>
+              {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Founder Section -->
+    <section class="py-32 bg-surface-variant px-6">
+        <div class="max-w-[1200px] mx-auto">
+            <div class="bg-surface rounded-[2.5rem] overflow-hidden flex items-center shadow-[0_40px_80px_-20px_rgba(38,71,36,0.1)]">
+                <div class="w-1/2 h-[500px] relative">
+                    {% if section.settings.founder_image %}
+                        <img src="{{ section.settings.founder_image | img_url: '800x' }}" class="w-full h-full object-cover">
+                    {% else %}
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLW9HLH8tuRtGiN2GYjcL_lVJPfOBOpTrb4h9rPP_AUlIN05zD-W36lVDaFcvvdiDIiH4Fq1bo9Ij6T0wEv_7yqvuosKDAhALAmyZG7weLIe_bOnhG3SlTm2cKeMdZPZLvzsWr0GvBEneyuo4KSMr1EdofKzJD1p_AtBtRHziRGicrVBiFXIQmpnk1mqksZSzFZNWGNsqtl0hb7YHHohmarG29hu4bA6XzPgVw_mv_tB85MJs1qm7-unm1Y5LGSCreEm727K3bahuh" class="w-full h-full object-cover">
+                    {% endif %}
+                </div>
+                <div class="w-1/2 p-16">
+                    <span class="material-symbols-outlined text-tertiary text-4xl mb-6 opacity-50" style="font-variation-settings: 'FILL' 1;">format_quote</span>
+                    <h3 class="font-headline text-3xl font-semibold mb-6 leading-snug">
+                        "{{ section.settings.founder_quote }}"
+                    </h3>
+                    <p class="font-body text-on-surface-variant mb-8">
+                        {{ section.settings.founder_text }}
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-0.5 bg-primary/20"></div>
+                        <div>
+                            <p class="font-headline font-bold text-lg">{{ section.settings.founder_name }}</p>
+                            <p class="font-body text-sm text-on-surface-variant uppercase tracking-wider">{{ section.settings.founder_title }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="py-32 bg-surface px-6">
+        <div class="max-w-[800px] mx-auto">
+            <h2 class="font-headline text-4xl font-bold text-center mb-20 tracking-tight">{{ section.settings.timeline_title }}</h2>
+            <div class="relative border-l-2 border-surface-container-high ml-[50%] space-y-16">
+                {% assign row_count = 0 %}
+                {% for block in section.blocks %}
+                  {% if block.type == 'timeline' %}
+                    {% assign row_count = row_count | plus: 1 %}
+                    {% assign is_even = row_count | modulo: 2 %}
+                    <div class="relative flex justify-between items-center w-full group -ml-[21px]" {{ block.shopify_attributes }}>
+                        <div class="absolute left-1/2 -ml-[9px] w-4 h-4 rounded-full {% if is_even == 0 %}bg-primary-fixed-dim{% else %}bg-tertiary-container{% endif %} ring-4 ring-surface"></div>
+                        
+                        {% if is_even != 0 %}
+                            <div class="w-[45%] text-right pr-12">
+                                <span class="font-headline text-2xl font-bold text-primary block mb-2">{{ block.settings.year }}</span>
+                            </div>
+                            <div class="w-[45%] pl-12">
+                                <h4 class="font-headline text-xl font-bold mb-2">{{ block.settings.title }}</h4>
+                                <p class="font-body text-on-surface-variant">{{ block.settings.text }}</p>
+                            </div>
+                        {% else %}
+                            <div class="w-[45%] text-right pr-12 order-2">
+                                <h4 class="font-headline text-xl font-bold mb-2">{{ block.settings.title }}</h4>
+                                <p class="font-body text-on-surface-variant">{{ block.settings.text }}</p>
+                            </div>
+                            <div class="w-[45%] pl-12 order-1 text-left">
+                                <span class="font-headline text-2xl font-bold text-primary block mb-2">{{ block.settings.year }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-32 bg-primary text-on-primary px-6 text-center">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="font-headline text-6xl font-bold mb-8 tracking-tight">{{ section.settings.cta_title }}</h2>
+            <p class="font-body text-xl text-primary-fixed mb-12 max-w-2xl mx-auto opacity-90">
+                {{ section.settings.cta_text }}
+            </p>
+            <a href="{{ section.settings.cta_link | default: '/collections/all' }}" class="inline-block bg-surface-container-lowest text-primary px-10 py-4 rounded-xl font-headline font-bold text-lg tracking-wide hover:bg-surface transition-colors shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)]">
+                {{ section.settings.cta_button }}
+            </a>
+        </div>
+    </section>
+</div>
+"""
+
+mobile_html = """
+<div class="block md:hidden bg-background text-on-background font-body antialiased">
+    <!-- Main Content Canvas -->
+    <main class="pb-20">
+        <!-- Hero Section -->
+        <section class="relative w-full px-4 mb-4 mt-4">
+            <div class="w-full h-[400px] rounded-[2rem] overflow-hidden bg-surface-container shadow-[0_40px_60px_-15px_rgba(38,71,36,0.08)] relative">
+                {% if section.settings.hero_image %}
+                    <img src="{{ section.settings.hero_image | img_url: '600x' }}" alt="{{ section.settings.hero_image.alt }}" class="w-full h-full object-cover opacity-90">
+                {% else %}
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBNRp03lZxWRbbTtz4DUNNv3NbZcwgePHevDc59HU4qCW6eci2V8FVSdN_D9_7WiDlHQX7YpI7jFT9B4kWIH9f9bnRbsOcvL3SiuwPlebL0-AzN14ie9ldtZHsuIhrAXR3cxNVnZ4xj22Ts5Dw-h15kMDRG1AWnSxBBej-MNkOYSidxDntSarNi7HlBhPtotdLTJbvsRetae2JweJ7h61dsljL47A8hH-SgMmVNfBYiAa4ZD7tkRqG0tFys5b3cjjSHWwLBY0Fn39a" class="w-full h-full object-cover opacity-90">
+                {% endif %}
+                <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+            </div>
+            <!-- Floating Text Card -->
+            <div class="bg-surface-container-lowest rounded-[2rem] p-8 -mt-24 mx-4 relative z-10 shadow-[0_30px_50px_-15px_rgba(38,71,36,0.06)] backdrop-blur-sm bg-opacity-95">
+                <h2 class="font-headline text-[2rem] font-extrabold text-on-surface leading-[1.1] tracking-tight mb-4">
+                    {{ section.settings.hero_title }}<br/>
+                    <span class="text-primary block mt-1">{{ section.settings.hero_title_highlight }}</span>
+                </h2>
+                <p class="font-body text-on-surface-variant text-sm leading-relaxed">
+                    {{ section.settings.hero_text | newline_to_br }}
+                </p>
+            </div>
+        </section>
+
+        <!-- Mission / Vision -->
+        <section class="w-full py-16 bg-surface-container-low rounded-t-[3rem] px-8 mb-4 mt-8">
+            <div class="mb-12">
+                <h3 class="font-headline text-xs tracking-widest uppercase text-tertiary mb-3 font-bold">{{ section.settings.mission_title }}</h3>
+                <p class="font-headline text-xl text-on-surface leading-snug">
+                    {{ section.settings.mission_text }}
+                </p>
+            </div>
+            <div>
+                <h3 class="font-headline text-xs tracking-widest uppercase text-tertiary mb-3 font-bold">{{ section.settings.vision_title }}</h3>
+                <p class="font-body text-base text-on-surface-variant leading-relaxed">
+                    {{ section.settings.vision_text }}
+                </p>
+            </div>
+        </section>
+
+        <!-- Why Choose Us Grid (Bento Style) -->
+        <section class="px-6 py-12">
+            <h3 class="font-headline text-2xl font-bold text-on-surface mb-8">{{ section.settings.standards_title }}</h3>
+            <div class="flex flex-col space-y-6">
+                {% for block in section.blocks %}
+                  {% if block.type == 'feature' %}
+                    <div class="bg-surface-container-lowest p-6 rounded-[1.5rem] flex items-start space-x-5 shadow-[0_20px_40px_-10px_rgba(38,71,36,0.04)]" {{ block.shopify_attributes }}>
+                        <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-on-secondary-container">{{ block.settings.icon }}</span>
+                        </div>
+                        <div>
+                            <h4 class="font-headline text-lg font-bold text-on-surface mb-1">{{ block.settings.title }}</h4>
+                            <p class="font-body text-sm text-on-surface-variant leading-relaxed">{{ block.settings.text }}</p>
+                        </div>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Founder Message -->
+        <section class="bg-surface-dim py-20 px-6 relative overflow-hidden mt-8">
+            <div class="absolute -top-20 -right-20 w-64 h-64 bg-secondary-container rounded-full opacity-30 blur-[60px]"></div>
+            <h3 class="font-headline text-xs tracking-widest uppercase text-primary mb-10 font-bold relative z-10">{{ section.settings.founder_label }}</h3>
+            <div class="relative z-10">
+                <div class="w-2/3 h-72 rounded-[2rem] overflow-hidden shadow-[0_30px_50px_-15px_rgba(38,71,36,0.15)] mb-8">
+                    {% if section.settings.founder_image %}
+                        <img src="{{ section.settings.founder_image | img_url: '600x' }}" class="w-full h-full object-cover">
+                    {% else %}
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPAk93EKGAoOvP9pDYX9W8SNQLFkA6n2tRlaQAQy-pm0A_-1ztOvfwFElhpJ182RZl4VznloGZ6v4muqbjIlSxk3gLqvBxf6XoQoRhzdJWYLPZv8Wn6JROYlNlOg97KRYCA_B7z3QHbEGwYWcM6f313eOgR95Gyumk0Bk460OLNvBs8VGhDLl0EgSofdl0IPB1U6UG9Hs7nbV5bDFOzRZLUdTXtz7cXWt_0rTuIZx80jSfI3trruM1PNUVcn350BlAB-Lw75SWnoUy" class="w-full h-full object-cover">
+                    {% endif %}
+                </div>
+                <div class="bg-surface-container-lowest p-8 rounded-[2rem] absolute top-32 right-0 w-[85%] shadow-[0_40px_60px_-15px_rgba(38,71,36,0.1)]">
+                    <span class="text-tertiary font-serif text-5xl leading-none block mb-2 opacity-50">"</span>
+                    <p class="font-body text-base text-on-surface-variant italic mb-6 leading-relaxed">
+                        {{ section.settings.founder_quote }}
+                    </p>
+                    <p class="font-headline text-sm font-bold text-primary tracking-wide uppercase">— {{ section.settings.founder_name }}</p>
+                </div>
+            </div>
+            <div class="h-32"></div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="py-20 px-8 bg-surface-container-high rounded-t-[3rem]">
+            <h3 class="font-headline text-2xl font-bold text-on-surface mb-16 text-center">{{ section.settings.timeline_title }}</h3>
+            <div class="flex flex-col space-y-12 max-w-sm mx-auto">
+                {% assign b_count = 0 %}
+                {% for block in section.blocks %}
+                  {% if block.type == 'timeline' %}
+                    {% assign b_count = b_count | plus: 1 %}
+                    <div class="relative pl-10" {{ block.shopify_attributes }}>
+                        <div class="absolute left-0 top-1.5 w-4 h-4 rounded-full {% if b_count == 1 %}bg-primary shadow-[0_0_15px_rgba(38,71,36,0.3)]{% elsif b_count == 2 %}bg-secondary-container{% else %}bg-outline-variant opacity-60{% endif %}"></div>
+                        <h4 class="font-headline font-extrabold {% if b_count == 1 %}text-primary{% else %}text-on-surface{% endif %} text-xl mb-2">{{ block.settings.year }}</h4>
+                        <p class="font-body text-sm text-on-surface-variant leading-relaxed">{{ block.settings.text }}</p>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+</div>
+"""
+
+full_content = desktop_html + "\\n" + mobile_html + "\\n" + schema
+
+with open(r"f:\TQS website\tqs-topqualitystore-myshopify-com\sections\tqs-about-page.liquid", "w", encoding="utf-8") as f:
+    f.write(full_content)

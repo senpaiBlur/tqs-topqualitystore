@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "main": {
+      "type": "tqs-collection-template"
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
