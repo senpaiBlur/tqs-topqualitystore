@@ -192,140 +192,81 @@
                       High-Quality Ingredients.<br/>Honest Formulations.
                   </h2>
               </div>
-              <!-- Tabs -->
-              <div class="flex space-x-6 font-label text-sm font-semibold uppercase tracking-wide">
-                  <button id="tab-bestsellers" class="text-primary border-b-2 border-primary pb-1 transition-all">Best Sellers</button>
-                  <button id="tab-new" class="text-outline hover:text-primary transition-all pb-1">New Launches</button>
-              </div>
           </div>
 
-          <!-- Dynamic Products Lists using Shopify Web Components -->
-          
-          <!-- Best Sellers Grid -->
-          <div id="grid-bestsellers" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16 transition-opacity duration-500">
-              <shopify-list-context type="product" query="products" first="4">
+          <div id="grid-main" class="grid grid-cols-2 lg:grid-cols-4 gap-x-4 md:gap-x-8 gap-y-12 md:gap-y-16">
+              <shopify-list-context type="product" query="products" first="12">
                   <template>
                       <div class="group flex flex-col space-y-4">
-                          <!-- Image Card linked to product entirely -->
-                          <a shopify-attr--href="product.onlineStoreUrl" class="block relative aspect-[4/5] bg-surface-container-low rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(26,28,28,0.03)]">
+                          <!-- Image Card -->
+                          <div class="relative aspect-[4/5] bg-surface-container-low rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(26,28,28,0.03)] group/img">
+                              <a shopify-attr--href="product.onlineStoreUrl" class="block w-full h-full">
+                                <shopify-media query="product.selectedOrFirstAvailableVariant.image"></shopify-media>
+                              </a>
                               
-                              <shopify-media query="product.selectedOrFirstAvailableVariant.image"></shopify-media>
-                              
-                              <div class="absolute top-4 left-4 flex gap-2">
-                                  <span class="bg-secondary-container text-on-surface px-2 py-1 rounded-sm font-label text-[10px] uppercase font-bold tracking-widest">
+                              <div class="absolute top-4 left-4 flex flex-col gap-2">
+                                  <span class="bg-secondary-container text-on-surface px-2 py-1 rounded-sm font-label text-[10px] uppercase font-bold tracking-widest shadow-sm">
                                       <shopify-data query="product.vendor"></shopify-data>
                                   </span>
+                                  <shopify-context type="product">
+                                    <template>
+                                      <div class="save-badge bg-error text-white px-2 py-1 rounded-sm font-label text-[10px] uppercase font-bold tracking-widest shadow-sm"
+                                           shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > product.selectedOrFirstAvailableVariant.price.amount ? 'display:block' : 'display:none'">
+                                        SAVE {{ product.selectedOrFirstAvailableVariant.compareAtPrice.amount | minus: product.selectedOrFirstAvailableVariant.price.amount | times: 100 | divided_by: product.selectedOrFirstAvailableVariant.compareAtPrice.amount | round }}%
+                                      </div>
+                                    </template>
+                                  </shopify-context>
                               </div>
 
-                              <shopify-variant-selector style="display:none;"></shopify-variant-selector>
+                              <!-- Overlay Action Buttons for Desktop Hover -->
+                              <div class="absolute inset-x-4 bottom-4 translate-y-4 opacity-0 group-hover/img:translate-y-0 group-hover/img:opacity-100 transition-all duration-300 hidden md:flex gap-2">
+                                  <button onclick="document.querySelector('shopify-store').buyNow(event); event.preventDefault();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="flex-grow bg-primary text-on-primary py-3 rounded-full font-headline font-bold text-[10px] uppercase tracking-widest hover:bg-inverse-surface transition-colors cursor-pointer">
+                                      Buy Now
+                                  </button>
+                                  <button onclick="document.getElementById('cart').addLine(event).showModal(); event.preventDefault();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="w-12 h-12 bg-surface-container-lowest text-primary rounded-full flex items-center justify-center hover:bg-surface-dim transition-colors cursor-pointer shadow-lg">
+                                      <span class="material-symbols-outlined text-[20px] pointer-events-none">add</span>
+                                  </button>
+                              </div>
+                          </div>
+                          
+                          <!-- Info -->
+                          <div class="flex flex-col flex-grow">
+                              <a shopify-attr--href="product.onlineStoreUrl" class="space-y-1 block">
+                                  <h3 class="font-headline text-base md:text-lg font-bold text-primary truncate">
+                                      <shopify-data query="product.title"></shopify-data>
+                                  </h3>
+                                  <div class="flex items-center flex-wrap gap-2 pt-1">
+                                      <span class="font-headline text-lg font-bold text-primary">
+                                          <shopify-money query="product.selectedOrFirstAvailableVariant.price"></shopify-money>
+                                      </span>
+                                      <span class="font-body text-sm text-outline line-through opacity-60" shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > 0 ? 'display:inline' : 'display:none'">
+                                          <shopify-money query="product.selectedOrFirstAvailableVariant.compareAtPrice"></shopify-money>
+                                      </span>
+                                  </div>
+                              </a>
                               
-                              <!-- Cart interaction (nested button needs preventDefault/event stop propagation if wrapped in anchor, using external button layout is safer) -->
-                          </a>
-                          
-                          <!-- Add to Bag Button extracted outside anchor tag for clean clickability -->
-                          <button class="w-full bg-surface-container-lowest border-2 border-primary text-primary font-headline font-bold text-xs uppercase tracking-wider py-3 rounded-full transition-all duration-300 hover:bg-primary hover:text-on-primary"
-                                  onclick="document.getElementById('cart').addLine(event).showModal();"
-                                  shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale">
-                              Quick Add
-                          </button>
-                          
-                          <a shopify-attr--href="product.onlineStoreUrl" class="space-y-1 block group-hover:opacity-80 transition-opacity cursor-pointer">
-                              <h3 class="font-headline text-lg font-bold text-primary">
-                                  <shopify-data query="product.title"></shopify-data>
-                              </h3>
-                              <p class="font-body text-sm text-on-surface-variant line-clamp-1">
-                                  <shopify-data query="product.description"></shopify-data>
-                              </p>
-                              <p class="font-label text-sm font-semibold pt-2 text-primary">
-                                  <shopify-money query="product.selectedOrFirstAvailableVariant.price"></shopify-money>
-                              </p>
-                          </a>
+                              <!-- Mobile Only Action Buttons (Stacked or simplified) -->
+                              <div class="mt-4 flex md:hidden gap-2">
+                                  <button onclick="document.querySelector('shopify-store').buyNow(event)" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="flex-grow bg-primary text-on-primary py-2.5 rounded-full font-headline font-bold text-[10px] uppercase tracking-widest cursor-pointer">
+                                      Buy Now
+                                  </button>
+                                  <button onclick="document.getElementById('cart').addLine(event).showModal();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="w-10 h-10 border border-primary text-primary rounded-full flex items-center justify-center cursor-pointer">
+                                      <span class="material-symbols-outlined text-[18px] pointer-events-none">add</span>
+                                  </button>
+                              </div>
+                          </div>
                       </div>
                   </template>
-                  <!-- Loader Placeholder -->
-                  <div shopify-loading-placeholder class="col-span-4 text-center py-20 text-tertiary-fixed-dim">
-                      <span class="material-symbols-outlined animate-spin mb-4 text-4xl">refresh</span><br/>
-                      Loading Best Sellers...
+                  <div shopify-loading-placeholder class="col-span-2 lg:col-span-4 text-center py-40">
+                      <div class="animate-pulse flex flex-col items-center">
+                          <div class="w-12 h-12 bg-surface-container-highest rounded-full mb-4"></div>
+                          <p class="font-headline text-primary opacity-50 uppercase tracking-widest text-xs">Curating Ingredients...</p>
+                      </div>
                   </div>
               </shopify-list-context>
           </div>
-
-          <!-- New Launches Grid (Hidden initially) -->
-          <div id="grid-new" class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16 transition-opacity duration-500 opacity-0">
-              <!-- Reusing products query for demo purpose as webcomponents default, in production this maps to a collection list context -->
-              <shopify-list-context type="product" query="products" first="4" reverse="true">
-                  <template>
-                      <div class="group flex flex-col space-y-4">
-                          <a shopify-attr--href="product.onlineStoreUrl" class="block relative aspect-[4/5] bg-surface-container-low rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(26,28,28,0.03)]">
-                              <shopify-media query="product.selectedOrFirstAvailableVariant.image"></shopify-media>
-                              <div class="absolute top-4 left-4 flex gap-2">
-                                  <span class="bg-surface-container-highest text-primary px-2 py-1 rounded-sm font-label text-[10px] uppercase font-bold tracking-widest shadow-sm">
-                                      New
-                                  </span>
-                              </div>
-                              <shopify-variant-selector style="display:none;"></shopify-variant-selector>
-                          </a>
-                          
-                          <button class="w-full bg-surface-container-lowest border-2 border-primary text-primary font-headline font-bold text-xs uppercase tracking-wider py-3 rounded-full transition-all duration-300 hover:bg-primary hover:text-on-primary"
-                                  onclick="document.getElementById('cart').addLine(event).showModal();"
-                                  shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale">
-                              Quick Add
-                          </button>
-                          
-                          <a shopify-attr--href="product.onlineStoreUrl" class="space-y-1 block group-hover:opacity-80 transition-opacity cursor-pointer">
-                              <h3 class="font-headline text-lg font-bold text-primary">
-                                  <shopify-data query="product.title"></shopify-data>
-                              </h3>
-                              <p class="font-body text-sm text-on-surface-variant line-clamp-1">
-                                  <shopify-data query="product.description"></shopify-data>
-                              </p>
-                              <p class="font-label text-sm font-semibold pt-2 text-primary">
-                                  <shopify-money query="product.selectedOrFirstAvailableVariant.price"></shopify-money>
-                              </p>
-                          </a>
-                      </div>
-                  </template>
-              </shopify-list-context>
-          </div>
-
       </div>
   </section>
-
-  <script>
-      // Tab Toggle Logic
-      document.addEventListener("DOMContentLoaded", () => {
-          const tabBest = document.getElementById('tab-bestsellers');
-          const tabNew = document.getElementById('tab-new');
-          const gridBest = document.getElementById('grid-bestsellers');
-          const gridNew = document.getElementById('grid-new');
-
-          const switchTab = (activeTab, inactiveTab, activeGrid, inactiveGrid) => {
-              // Styling
-              activeTab.classList.add('text-primary', 'border-b-2', 'border-primary');
-              activeTab.classList.remove('text-outline');
-              inactiveTab.classList.remove('text-primary', 'border-b-2', 'border-primary');
-              inactiveTab.classList.add('text-outline');
-
-              // Grids Toggle with fade
-              inactiveGrid.classList.remove('opacity-100');
-              inactiveGrid.classList.add('opacity-0');
-              setTimeout(() => {
-                  inactiveGrid.classList.add('hidden');
-                  inactiveGrid.classList.remove('grid');
-                  
-                  activeGrid.classList.remove('hidden');
-                  activeGrid.classList.add('grid');
-                  setTimeout(() => {
-                      activeGrid.classList.remove('opacity-0');
-                      activeGrid.classList.add('opacity-100');
-                  }, 50);
-              }, 400); // 400ms CSS fade margin
-          };
-
-          tabBest.addEventListener('click', () => switchTab(tabBest, tabNew, gridBest, gridNew));
-          tabNew.addEventListener('click', () => switchTab(tabNew, tabBest, gridNew, gridBest));
-      });
-  </script>
 
 </main>
 
@@ -357,3 +298,15 @@
       </p>
   </div>
 </footer>
+
+{% schema %}
+{
+  "name": "TQS Home Storefront",
+  "settings": [],
+  "presets": [
+    {
+      "name": "TQS Home Storefront"
+    }
+  ]
+}
+{% endschema %}
