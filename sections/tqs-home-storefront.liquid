@@ -217,13 +217,19 @@
             <div class="flex flex-col space-y-4">
                 <span class="font-label text-xs font-black uppercase tracking-[0.2em] text-outline mb-2">Explore</span>
                 {% for link in linklists[section.settings.main_menu].links %}
-                    <a class="font-label text-sm font-bold hover:text-outline transition-colors" href="{{ link.url }}">{{ link.title }}</a>
+                    {% assign link_title_lower = link.title | downcase %}
+                    {% unless link_title_lower contains 'search' %}
+                        <a class="font-label text-sm font-bold hover:text-outline transition-colors" href="{{ link.url }}">{{ link.title }}</a>
+                    {% endunless %}
                 {% endfor %}
             </div>
             <div class="flex flex-col space-y-4">
                 <span class="font-label text-xs font-black uppercase tracking-[0.2em] text-outline mb-2">Policies</span>
                 {% for link in linklists[section.settings.footer_menu].links %}
-                    <a class="font-label text-sm font-bold hover:text-outline transition-colors" href="{{ link.url }}">{{ link.title }}</a>
+                    {% assign link_title_lower = link.title | downcase %}
+                    {% unless link_title_lower contains 'search' %}
+                        <a class="font-label text-sm font-bold hover:text-outline transition-colors" href="{{ link.url }}">{{ link.title }}</a>
+                    {% endunless %}
                 {% endfor %}
             </div>
             <div class="flex flex-col space-y-4">
