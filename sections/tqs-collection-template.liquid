@@ -53,7 +53,37 @@
     shopify-variant-selector { display: none !important; }
 </style>
 
-<div class="bg-surface text-on-surface w-full flex justify-center pb-20 pt-16">
+<!-- TopNavBar -->
+<nav class="w-full z-50 bg-[#faf9f9]/80 backdrop-blur-xl shadow-sm border-b border-outline-variant/20 text-[#020202] flex flex-col max-w-none transition-all duration-300">
+  <div class="px-6 md:px-12 py-4 flex items-center justify-between">
+      <!-- Brand Logo -->
+      <a class="text-2xl font-black tracking-tighter text-[#020202] font-headline hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/">
+          {{ section.settings.brand_text }}
+      </a>
+      <!-- Navigation Links (Web) -->
+      <div class="hidden md:flex space-x-8 items-center font-['Be_Vietnam_Pro'] tracking-tight text-sm uppercase font-semibold">
+          <a class="text-[#3c3b3b] hover:text-[#000000] transition-colors hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/">Home</a>
+          <a class="text-[#000000] border-b-2 border-[#000000] pb-1 hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/collections/all">All Products</a>
+          <a class="text-[#3c3b3b] hover:text-[#000000] transition-colors hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/collections/face-wash">Face Wash</a>
+          <a class="text-[#3c3b3b] hover:text-[#000000] transition-colors hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/collections/serums">Serums</a>
+          <a class="text-[#3c3b3b] hover:text-[#000000] transition-colors hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100" href="/collections/creams">Creams</a>
+      </div>
+      <!-- Trailing Icons -->
+      <div class="flex items-center space-x-4">
+          <a href="/search" aria-label="Search" class="text-[#020202] hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100 p-2">
+              <span class="material-symbols-outlined" data-icon="search">search</span>
+          </a>
+          <a href="/account" aria-label="Profile" class="text-[#020202] hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100 p-2">
+              <span class="material-symbols-outlined" data-icon="person">person</span>
+          </a>
+          <button aria-label="Cart" class="text-[#020202] hover:opacity-70 transition-opacity duration-300 scale-95 active:duration-100 p-2 relative" onclick="document.getElementById('cart').showModal();">
+              <span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+          </button>
+      </div>
+  </div>
+</nav>
+
+<div class="bg-surface text-on-surface w-full flex justify-center pb-20 pt-8">
     {% assign active_collection = collection.handle %}
     {% if active_collection == blank %}
         {% assign active_collection = 'all' %}
@@ -84,21 +114,21 @@
             </div>
             
             <!-- Filter/Sort Bar -->
-            <div class="flex flex-col sm:flex-row items-center gap-4 mt-2 max-w-2xl">
+            <div class="flex flex-col sm:flex-row items-center gap-4 mt-4 w-full">
                 <!-- Collection Filter -->
-                <div class="relative w-full sm:w-1/2">
-                    <select id="collectionDropdown" onchange="window.location.href=this.value" class="w-full appearance-none bg-surface-container-high text-on-surface-variant rounded-xl py-3 px-4 pr-10 font-body text-sm font-medium hover:bg-surface-variant transition-colors outline-none cursor-pointer">
-                        <option value="/collections/all">All Collections</option>
+                <div class="relative w-full sm:w-auto flex-grow max-w-sm">
+                    <select id="collectionDropdown" onchange="window.location.href=this.value" class="w-full appearance-none bg-surface-container-low border border-outline-variant/40 text-on-surface rounded-md py-3 px-4 pr-10 font-label text-xs uppercase tracking-widest font-bold hover:border-primary/40 focus:border-primary transition-colors outline-none cursor-pointer shadow-sm">
+                        <option value="/collections/all">All Collections / Category</option>
                         {% for c in collections %}
                             <option value="{{ c.url }}" {% if collection.handle == c.handle %}selected{% endif %}>{{ c.title }}</option>
                         {% endfor %}
                     </select>
-                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[18px] text-on-surface-variant">expand_more</span>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[20px] text-primary">expand_more</span>
                 </div>
 
                 <!-- Sort By -->
-                <div class="relative w-full sm:w-1/2">
-                    <select id="sortDropdown" onchange="applySort(this.value)" class="w-full appearance-none bg-surface-container-high text-on-surface-variant rounded-xl py-3 px-4 pr-10 font-body text-sm font-medium hover:bg-surface-variant transition-colors outline-none cursor-pointer">
+                <div class="relative w-full sm:w-auto flex-grow max-w-sm">
+                    <select id="sortDropdown" onchange="applySort(this.value)" class="w-full appearance-none bg-surface-container-low border border-outline-variant/40 text-on-surface rounded-md py-3 px-4 pr-10 font-label text-xs uppercase tracking-widest font-bold hover:border-primary/40 focus:border-primary transition-colors outline-none cursor-pointer shadow-sm">
                         <option value="">Sort By: Default</option>
                         <option value="TITLE_ASC">Alphabetically, A-Z</option>
                         <option value="TITLE_DESC">Alphabetically, Z-A</option>
@@ -107,7 +137,7 @@
                         <option value="CREATED_AT_DESC">Date, new to old</option>
                         <option value="CREATED_AT_ASC">Date, old to new</option>
                     </select>
-                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[18px] text-on-surface-variant">sort</span>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[18px] text-primary">sort</span>
                 </div>
             </div>
 
@@ -133,43 +163,36 @@
         </section>
 
         <!-- Product Grid Responsive (2 Mobile, 3 Tablet, 4 Desktop, 5 Large Desktop) -->
-        <shopify-list-context class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6" type="product" query="{{ list_query }}" first="24">
-            <template>
-                    <!-- Product Card -->
-                    <article class="flex flex-col bg-surface-container-low rounded-xl overflow-hidden relative group custom-product-card shadow-[0_4px_20px_rgba(30,30,30,0.02)] hover:shadow-[0_12px_36px_rgba(30,30,30,0.06)] transition-all duration-300">
-                        <a shopify-attr--href="product.onlineStoreUrl" class="block flex-grow group-link">
-                            <!-- Image Container -->
-                            <div class="aspect-[4/5] relative w-full bg-surface-container-highest overflow-hidden">
-                                <div class="image-wrapper w-full h-full">
-                                    <shopify-media query="product.selectedOrFirstAvailableVariant.image"></shopify-media>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6 mt-6">
+            <shopify-list-context type="product" query="{{ list_query }}" first="24" style="display: contents;">
+                <template>
+                        <!-- Product Card -->
+                        <article class="flex flex-col bg-surface-container-low rounded-xl overflow-hidden relative group custom-product-card shadow-[0_4px_20px_rgba(30,30,30,0.02)] hover:shadow-[0_12px_36px_rgba(30,30,30,0.06)] transition-all duration-300">
+                            <a shopify-attr--href="product.onlineStoreUrl" class="block flex-grow group-link">
+                                <!-- Image Container -->
+                                <div class="aspect-[4/5] relative w-full bg-surface-container-highest overflow-hidden">
+                                    <div class="image-wrapper w-full h-full">
+                                        <shopify-media query="product.selectedOrFirstAvailableVariant.image"></shopify-media>
+                                    </div>
+                                    
+                                    <!-- Category/Vendor Badge -->
+                                    <div class="absolute top-2 left-2 flex gap-1 items-start flex-col">
+                                        <div class="bg-secondary-container/90 backdrop-blur-sm text-on-secondary-container font-label text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full shadow-sm">
+                                            <shopify-data query="product.vendor"></shopify-data>
+                                        </div>
+                                        <!-- Dynamic Save Badge -->
+                                        <div class="px-2 py-1 bg-[#ba1a1a] text-white font-label text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm" shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > product.selectedOrFirstAvailableVariant.price.amount ? 'display:block' : 'display:none'">
+                                            SAVE <span shopify-text="Math.round(((product.selectedOrFirstAvailableVariant.compareAtPrice.amount - product.selectedOrFirstAvailableVariant.price.amount) / product.selectedOrFirstAvailableVariant.compareAtPrice.amount) * 100) + '%'">10%</span>
+                                        </div>
+                                    </div>
                                 </div>
                                 
-                                <!-- Category/Vendor Badge -->
-                                <div class="absolute top-2 left-2 flex gap-1 items-start flex-col">
-                                    <div class="bg-secondary-container/90 backdrop-blur-sm text-on-secondary-container font-label text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full shadow-sm">
-                                        <shopify-data query="product.vendor"></shopify-data>
-                                    </div>
-                                    <!-- Dynamic Save Badge -->
-                                    <div class="px-2 py-1 bg-[#ba1a1a] text-white font-label text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm" shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > product.selectedOrFirstAvailableVariant.price.amount ? 'display:block' : 'display:none'">
-                                        SAVE <shopify-text text="Math.round(((product.selectedOrFirstAvailableVariant.compareAtPrice.amount - product.selectedOrFirstAvailableVariant.price.amount) / product.selectedOrFirstAvailableVariant.compareAtPrice.amount) * 100) + '%'"></shopify-text>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Content -->
-                            <div class="p-3 flex flex-col justify-between gap-2 h-full bg-surface-container-lowest">
-                                <div class="flex flex-col gap-1">
-                                    <!-- Rating Mock -->
-                                    <div class="flex items-center gap-1 text-tertiary-container">
-                                        <span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
-                                        <span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
-                                        <span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
-                                        <span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
-                                        <span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
-                                    </div>
-                                    <h3 class="font-body text-sm md:text-base font-medium text-on-surface leading-tight line-clamp-2 mt-1">
-                                        <shopify-data query="product.title"></shopify-data>
-                                    </h3>
+                                <!-- Content -->
+                                <div class="p-3 flex flex-col justify-between gap-2 h-full bg-surface-container-lowest">
+                                    <div class="flex flex-col gap-1">
+                                        <h3 class="font-body text-sm md:text-base font-medium text-on-surface leading-tight line-clamp-2 mt-1">
+                                            <shopify-data query="product.title"></shopify-data>
+                                        </h3>
                                 </div>
                                 <div class="flex flex-col gap-3 mt-auto pt-2">
                                     <div class="flex flex-wrap gap-x-2 gap-y-0.5 items-end">
@@ -196,19 +219,12 @@
                     </article>
             </template>
             <!-- Loading Indicator -->
-            <div shopify-loading-placeholder class="w-full text-center py-32 text-primary opacity-60">
+            <div shopify-loading-placeholder class="col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5 w-full text-center py-32 text-primary opacity-60">
                 <span class="material-symbols-outlined animate-spin mb-4 text-3xl">refresh</span><br/>
                 Loading Collection...
             </div>
         </shopify-list-context>
-
-        <!-- Load More Button -->
-        <div class="mt-8 flex justify-center w-full">
-            <button class="w-full md:w-auto bg-surface-container-highest text-primary font-headline font-semibold text-sm py-4 px-12 rounded-xl hover:bg-surface-variant transition-colors flex items-center justify-center gap-2 active:scale-95">
-                Load More Rituals
-                <span class="material-symbols-outlined text-[18px]">expand_more</span>
-            </button>
-        </div>
+    </div>
 
     {% if is_global %}
         </div>
@@ -217,4 +233,35 @@
             </template>
         </shopify-context>
     {% endif %}
-</div>
+{% schema %}
+{
+  "name": "TQS Collection Page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "text",
+      "id": "brand_text",
+      "label": "Brand Name/Logo Text",
+      "default": "Top Quality Store (TQS)"
+    },
+    {
+      "type": "header",
+      "content": "Collection Settings"
+    },
+    {
+      "type": "text",
+      "id": "mobile_subtitle",
+      "label": "Header Subtitle",
+      "default": "Curated botanical remedies for daily vitality."
+    }
+  ],
+  "presets": [
+    {
+      "name": "TQS Collection Page"
+    }
+  ]
+}
+{% endschema %}
