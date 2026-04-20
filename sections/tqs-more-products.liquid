@@ -5,7 +5,7 @@
   .snap-center { scroll-snap-align: center; }
 </style>
 
-<section class="py-16 md:py-24 bg-gradient-to-b from-surface to-surface-dim w-full mt-4 pb-20 border-t border-white/60 relative z-10">
+<section class="py-16 md:py-24 bg-white w-full mt-4 pb-20 border-t border-outline/10 relative z-10">
     <div class="px-6 md:px-12 mb-12 max-w-7xl mx-auto flex justify-between items-end">
         <div>
             <h3 class="font-headline text-3xl md:text-4xl font-light text-primary uppercase tracking-tighter">{{ section.settings.title }}</h3>
@@ -20,10 +20,10 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 px-6 md:px-12 pb-12 w-full max-w-7xl mx-auto">
         <shopify-list-context type="product" query="products" first="6">
             <template>
-                <div class="group w-full bg-gradient-to-tr from-surface-container-low to-surface-bright rounded-2xl md:rounded-[2rem] overflow-hidden flex flex-col border border-white/60 shadow-premium transition-all duration-700 transform hover:shadow-floating hover:-translate-y-2 md:hover:-translate-y-3 relative">
+                <div class="group w-full bg-surface rounded-2xl md:rounded-[2rem] overflow-hidden flex flex-col border border-outline/5 shadow-premium transition-all duration-700 transform hover:shadow-floating hover:-translate-y-2 md:hover:-translate-y-3 relative">
                     <a shopify-attr--href="product.onlineStoreUrl" class="block relative group-link flex-grow">
                     <!-- Image -->
-                    <div class="w-full aspect-square relative overflow-hidden p-6 hidden-media-container-more">
+                    <div class="w-full aspect-square relative overflow-hidden p-2 hidden-media-container-more">
                         <style>
                           .hidden-media-container-more shopify-media::part(image) {
                             object-fit: contain;
@@ -31,10 +31,9 @@
                           }
                         </style>
                         <shopify-media query="product.selectedOrFirstAvailableVariant.image" class="w-full h-full mix-blend-multiply group-hover:scale-110 transition-transform duration-700"></shopify-media>
-                        <!-- SALE Badge -->
                         <div class="absolute top-4 left-4 z-10" shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > product.selectedOrFirstAvailableVariant.price.amount ? 'display:block' : 'display:none'">
-                            <div class="bg-rose-400/95 backdrop-blur-md text-white font-label text-[8px] md:text-[9px] font-bold uppercase tracking-[0.2em] px-3 py-1 rounded-full shadow-soft-glow">
-                                SALE <span shopify-text="Math.round(((product.selectedOrFirstAvailableVariant.compareAtPrice.amount - product.selectedOrFirstAvailableVariant.price.amount) / product.selectedOrFirstAvailableVariant.compareAtPrice.amount) * 100) + '%'"></span>
+                            <div class="bg-rose-500 text-white font-headline text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-lg shadow-lg">
+                                <span shopify-text="Math.round(((product.selectedOrFirstAvailableVariant.compareAtPrice.amount - product.selectedOrFirstAvailableVariant.price.amount) / product.selectedOrFirstAvailableVariant.compareAtPrice.amount) * 100) + '% OFF'"></span>
                             </div>
                         </div>
                     </div>

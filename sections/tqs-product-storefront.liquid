@@ -34,7 +34,7 @@
     <!-- ==============================================
          DESKTOP VIEW (Saffron Layout)
          ============================================== -->
-    <div class="hidden md:flex flex-col min-h-screen bg-gradient-to-b from-surface-bright to-surface">
+    <div class="hidden md:flex flex-col min-h-screen bg-white">
       <!-- TopNavBar Desktop -->
       <nav class="fixed top-0 w-full z-50 bg-surface-bright/70 backdrop-blur-2xl shadow-premium border-b border-white/20 transition-all duration-500">
         <div class="flex items-center justify-between px-6 py-4 md:px-12 max-w-7xl mx-auto w-full">
@@ -113,7 +113,7 @@
                             
                             {% assign discount = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round %}
                             <span class="font-label text-[11px] font-bold bg-error text-white px-2.5 py-1 rounded-sm uppercase tracking-widest flex items-center shadow-sm">
-                                Save {{ discount }}%
+                                {{ discount }}% OFF
                             </span>
                         {% endif %}
                     </div>
@@ -188,7 +188,7 @@
     <!-- ==============================================
          MOBILE VIEW (Prana Layout)
          ============================================== -->
-    <div class="block md:hidden bg-gradient-to-b from-surface-bright to-surface pb-32">
+    <div class="block md:hidden bg-white pb-32">
       <!-- Mobile Native Header -->
       <header class="fixed top-0 w-full z-50 bg-surface-bright/80 backdrop-blur-2xl flex justify-between items-center px-6 h-16 border-b border-white/30 shadow-premium">
           <a href="/" class="text-primary active:scale-95 transition-transform flex items-center justify-center hover:opacity-80">
@@ -231,7 +231,7 @@
               </div>
           </section>
 
-          <section class="px-8 pt-12 pb-8 relative z-10 -mt-8 bg-surface rounded-t-[2.5rem] drop-shadow-2xl">
+          <section class="px-8 pt-12 pb-8 relative z-10 -mt-8 bg-white rounded-t-[2.5rem] drop-shadow-2xl">
               <h2 class="font-headline font-extrabold text-primary leading-none tracking-tight mb-2" style="font-size: calc({{ section.settings.title_size }}px * 0.75);">
                   <shopify-data query="product.title"></shopify-data>
               </h2>
@@ -257,16 +257,16 @@
                       {% if current_variant.compare_at_price > current_variant.price %}
                           {% assign discount = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round %}
                           <div>
-                              <span class="font-label text-[10px] font-bold bg-error text-white px-2 py-1 rounded-sm uppercase tracking-widest shadow-sm">
-                                  Save {{ discount }}%
-                              </span>
+                                <span class="font-label text-[10px] font-bold bg-error text-white px-2 py-1 rounded-sm uppercase tracking-widest shadow-sm">
+                                    {{ discount }}% OFF
+                                </span>
                           </div>
                       {% endif %}
                   </div>
               </div>
           </section>
 
-          <section class="px-6 py-8 bg-gradient-to-b from-surface-variant to-surface-dim space-y-4 rounded-t-[2.5rem]">
+          <section class="px-6 py-8 bg-white space-y-4 rounded-t-[2.5rem]">
               
               <!-- Details Accordion -->
               <details class="group bg-white rounded-2xl p-6 ambient-shadow">
@@ -336,7 +336,7 @@
     <!-- ==============================================
          GLOBAL REVIEWS SECTION (Both Layouts)
          ============================================== -->
-    <section class="py-16 md:py-24 bg-surface w-full mt-4 pb-20 md:pb-32">
+    <section class="py-16 md:py-24 bg-white w-full mt-4 pb-20 md:pb-32">
         <div class="px-6 md:px-12 mb-8 max-w-7xl mx-auto border-t border-surface-container-high pt-16">
             <h3 class="font-headline text-3xl font-bold text-primary">{{ section.settings.community_wisdom_title | default: 'Community Wisdom' }}</h3>
             <p class="font-body text-sm text-outline mt-2">{{ section.settings.community_wisdom_subtitle | default: 'Verified experiences from the modern apothecary.' }}</p>

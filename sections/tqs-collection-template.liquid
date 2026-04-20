@@ -151,7 +151,7 @@
     </div>
 </div>
 
-<div class="collection-page-body bg-gradient-to-b from-surface to-surface-dim text-on-surface w-full flex flex-col items-center">
+<div class="collection-page-body bg-white text-on-surface w-full flex flex-col items-center">
     {% assign active_collection = collection.handle %}
     {% if active_collection == blank %}{% assign active_collection = 'all' %}{% endif %}
     {% assign is_global = false %}
@@ -169,16 +169,16 @@
         </header>
 
         <!-- Premium Filter Bar -->
-        <div class="flex flex-col lg:flex-row items-center gap-8 py-12 border-y border-black/5 mb-16 w-full">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center gap-10 py-10 border-y border-outline/10 mb-16 w-full">
             <!-- Category Filter -->
             <div class="flex flex-col gap-3 w-full lg:w-auto">
-                <span class="font-label text-[10px] font-black uppercase tracking-[0.2em] text-outline ml-2">Browse Category</span>
-                <div class="relative min-w-[260px] tqs-select-wrapper">
-                    <select onchange="window.location.href=this.value" class="tqs-select w-full bg-surface-container-low border border-transparent text-black font-label text-[11px] font-black uppercase tracking-widest px-8 py-5 rounded-2xl cursor-pointer focus:ring-1 focus:ring-primary/20 focus:border-primary/20 transition-all hover:bg-surface-container-high">
-                        <option value="/collections/all">Everything</option>
+                <span class="font-label text-[10px] font-black uppercase tracking-[0.2em] text-outline ml-1">Browse Category</span>
+                <div class="relative min-w-[240px] tqs-select-wrapper">
+                    <select onchange="window.location.href=this.value" class="tqs-select w-full bg-white border border-outline/10 text-black font-headline text-[12px] font-bold uppercase tracking-widest px-6 py-4 rounded-xl cursor-pointer focus:ring-1 focus:ring-primary focus:border-primary transition-all hover:border-primary/30">
+                        <option value="/collections/all">All Products</option>
                         {% for c in collections %}
                             {% if c.products_count > 0 %}
-                                <option value="{{ c.url }}" {% if collection.handle == c.handle %}selected{% endif %}>{{ c.title }} ({{ c.products_count }})</option>
+                                <option value="{{ c.url }}" {% if collection.handle == c.handle %}selected{% endif %}>{{ c.title }}</option>
                             {% endif %}
                         {% endfor %}
                     </select>
@@ -187,25 +187,25 @@
 
             <!-- Price Filter -->
             <div class="flex flex-col gap-3 w-full lg:w-auto">
-                <span class="font-label text-[10px] font-black uppercase tracking-[0.2em] text-outline ml-2">Price Range</span>
-                <div class="flex items-center gap-3">
+                <span class="font-label text-[10px] font-black uppercase tracking-[0.2em] text-outline ml-1">Price Range</span>
+                <div class="flex items-center gap-2">
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-outline">₹</span>
-                        <input type="number" id="min-price" placeholder="Min" class="w-24 bg-surface-container-low border-0 text-black font-label text-[11px] font-bold px-8 py-5 rounded-2xl focus:ring-1 focus:ring-primary/20" onchange="applyPriceFilter()">
+                        <input type="number" id="min-price" placeholder="Min" class="w-24 bg-white border border-outline/10 text-black font-headline text-[12px] font-bold px-8 py-4 rounded-xl focus:ring-1 focus:ring-primary" onchange="applyPriceFilter()">
                     </div>
-                    <span class="text-outline">to</span>
+                    <span class="text-outline font-headline text-[10px] uppercase font-bold">to</span>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-outline">₹</span>
-                        <input type="number" id="max-price" placeholder="Max" class="w-24 bg-surface-container-low border-0 text-black font-label text-[11px] font-bold px-8 py-5 rounded-2xl focus:ring-1 focus:ring-primary/20" onchange="applyPriceFilter()">
+                        <input type="number" id="max-price" placeholder="Max" class="w-24 bg-white border border-outline/10 text-black font-headline text-[12px] font-bold px-8 py-4 rounded-xl focus:ring-1 focus:ring-primary" onchange="applyPriceFilter()">
                     </div>
                 </div>
             </div>
 
             <!-- Sort Filter -->
             <div class="flex flex-col gap-3 w-full lg:w-auto lg:ml-auto">
-                <span class="font-label text-[10px] font-black uppercase tracking-[0.2em] text-outline ml-2">Sort By</span>
-                <div class="relative min-w-[260px] tqs-select-wrapper">
-                    <select onchange="applySort(this.value)" class="tqs-select w-full bg-surface-container-low border border-transparent text-black font-label text-[11px] font-black uppercase tracking-widest px-8 py-5 rounded-2xl cursor-pointer focus:ring-1 focus:ring-primary/20 focus:border-primary/20 transition-all hover:bg-surface-container-high">
+                <span class="font-label text-[10px] font-black uppercase tracking-[0.2em] text-outline ml-1">Sort Order</span>
+                <div class="relative min-w-[240px] tqs-select-wrapper">
+                    <select onchange="applySort(this.value)" class="tqs-select w-full bg-white border border-outline/10 text-black font-headline text-[12px] font-bold uppercase tracking-widest px-6 py-4 rounded-xl cursor-pointer focus:ring-1 focus:ring-primary focus:border-primary transition-all hover:border-primary/30">
                         <option value="">Default Selection</option>
                         <option value="PRICE_ASC">Price: Low to High</option>
                         <option value="PRICE_DESC">Price: High to Low</option>
@@ -230,15 +230,15 @@
                     <template>
                         <article class="flex flex-col group custom-product-card">
                             <a shopify-attr--href="product.onlineStoreUrl" class="block flex-grow">
-                                <div class="aspect-square relative w-full bg-gradient-to-tr from-surface-container-low to-surface-bright rounded-[2rem] overflow-hidden shadow-premium transition-all duration-700 ease-out group-hover:shadow-floating group-hover:-translate-y-3 border border-white/60">
-                                    <div class="image-wrapper w-full h-full p-8 mix-blend-multiply">
+                                <div class="aspect-square relative w-full bg-surface rounded-[2rem] overflow-hidden shadow-premium transition-all duration-700 ease-out group-hover:shadow-floating group-hover:-translate-y-3 border border-outline/5">
+                                    <div class="image-wrapper w-full h-full p-2 mix-blend-multiply">
                                         <shopify-media query="product.selectedOrFirstAvailableVariant.image"></shopify-media>
                                     </div>
                                     
                                     <div class="absolute top-5 left-5 flex flex-col gap-2 z-10">
-                                        <div class="bg-rose-400/95 backdrop-blur-md text-white font-label text-[9px] font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full shadow-soft-glow" 
+                                        <div class="bg-rose-500 text-white font-headline text-[10px] font-black tracking-widest px-3 py-1 rounded-lg shadow-lg" 
                                              shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > product.selectedOrFirstAvailableVariant.price.amount ? 'display:inline-block' : 'display:none'">
-                                            SALE <span shopify-text="Math.round(((product.selectedOrFirstAvailableVariant.compareAtPrice.amount - product.selectedOrFirstAvailableVariant.price.amount) / product.selectedOrFirstAvailableVariant.compareAtPrice.amount) * 100) + '%'"></span>
+                                            <span shopify-text="Math.round(((product.selectedOrFirstAvailableVariant.compareAtPrice.amount - product.selectedOrFirstAvailableVariant.price.amount) / product.selectedOrFirstAvailableVariant.compareAtPrice.amount) * 100) + '% OFF'"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -283,7 +283,7 @@
 </div>
 
 <!-- Dynamic Footer -->
-<footer class="bg-surface-dim text-primary w-full pt-32 pb-16 border-t border-white/30">
+<footer class="bg-white text-primary w-full pt-32 pb-16 border-t border-outline/10">
     <div class="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 gap-16">
         <div class="md:col-span-4 space-y-6">
             <h4 class="text-2xl font-black tracking-tighter uppercase font-headline">{{ section.settings.brand_text }}</h4>
