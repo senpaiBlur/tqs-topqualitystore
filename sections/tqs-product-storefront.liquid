@@ -18,7 +18,7 @@
       0%    {opacity: 0; transform: translateY(-10px)}
       100%  {opacity: 1; transform: translateY(0)}
   }
-  .ambient-shadow { box-shadow: 0 10px 30px rgba(214, 184, 192, 0.2); }
+  .ambient-shadow { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); }
 
   /* Smooth scroll snapping */
   .gallery-scroll::-webkit-scrollbar {
@@ -134,7 +134,7 @@
                     </div>
                     
                     <!-- Paid Order (SAVE 10%) -->
-                    <button onclick="document.querySelector('shopify-store').buyNow(event)" class="w-full relative flex justify-center items-center px-8 py-4 bg-surface-bright border border-outline/20 text-primary font-headline font-bold text-[11px] uppercase tracking-widest rounded-full hover:bg-surface hover:border-primary/50 transition-all shadow-premium hover:shadow-soft-glow active:scale-95">
+                    <button onclick="document.querySelector('shopify-store').buyNow(event)" class="w-full relative flex justify-center items-center px-8 py-4 bg-white border border-gray-100 text-primary font-headline font-bold text-[11px] uppercase tracking-widest rounded-full hover:bg-gray-50 transition-all shadow-sm active:scale-95">
                         {{ section.settings.paid_order_text | default: 'Paid Order' }}
                         <span class="absolute -top-2 -right-1 bg-error text-white px-2.5 py-1 text-[10px] rounded-full shadow-md font-bold tracking-widest">{{ section.settings.paid_order_badge | default: 'SAVE 10%' }}</span>
                     </button>
@@ -152,7 +152,7 @@
                 <!-- Dynamic Accordions Blocks -->
                 {% for block in section.blocks %}
                   {% if block.type == 'accordion' %}
-                    <details class="group bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 ambient-shadow mb-6" {{ block.shopify_attributes }}>
+                    <details class="group bg-white border border-gray-100 rounded-2xl p-6 ambient-shadow mb-6" {{ block.shopify_attributes }}>
                         <summary class="flex justify-between items-center cursor-pointer list-none">
                             <span class="font-headline text-lg font-bold text-primary">{{ block.settings.title }}</span>
                             <span class="material-symbols-outlined text-primary group-open:rotate-180 transition-transform duration-300">expand_more</span>
@@ -232,7 +232,7 @@
               </div>
           </section>
 
-          <section class="px-8 pt-12 pb-8 relative z-10 -mt-8 bg-white rounded-t-[2.5rem] drop-shadow-2xl">
+          <section class="px-8 pt-12 pb-8 relative z-10 -mt-8 bg-white rounded-t-[2.5rem]">
               <h2 class="font-headline font-extrabold text-primary leading-none tracking-tight mb-2" style="font-size: calc({{ section.settings.title_size }}px * 0.75);">
                   <shopify-data query="product.title"></shopify-data>
               </h2>
@@ -267,11 +267,11 @@
               </div>
           </section>
 
-          <section class="px-6 py-8 bg-white space-y-4 rounded-t-[2.5rem]">
+          <section class="px-6 py-8 bg-white space-y-4">
               <!-- Main Mobile Control Buttons -->
-              <div class="bg-surface-bright rounded-3xl p-6 ambient-shadow mb-6 flex flex-col gap-4">
+              <div class="bg-white rounded-3xl p-6 border border-gray-100 ambient-shadow mb-6 flex flex-col gap-4">
                   <!-- Paid Order (SAVE 10%) -->
-                  <button onclick="document.querySelector('shopify-store').buyNow(event)" class="w-full relative flex justify-center items-center px-8 py-5 bg-surface-bright border border-outline/20 text-primary font-headline font-bold text-[11px] uppercase tracking-[0.1em] rounded-full active:scale-95 transition-all shadow-premium hover:shadow-soft-glow">
+                  <button onclick="document.querySelector('shopify-store').buyNow(event)" class="w-full relative flex justify-center items-center px-8 py-5 bg-white border border-gray-100 text-primary font-headline font-bold text-[11px] uppercase tracking-[0.1em] rounded-full active:scale-95 transition-all shadow-sm">
                       {{ section.settings.paid_order_text | default: 'Paid Order' }}
                       <span class="absolute -top-2 -right-1 bg-error text-white px-2.5 py-1 text-[10px] rounded-full shadow-md font-bold tracking-widest">{{ section.settings.paid_order_badge | default: 'SAVE 10%' }}</span>
                   </button>
@@ -283,7 +283,7 @@
               </div>
               
               <!-- Details Accordion -->
-              <details class="group bg-white rounded-2xl p-6 ambient-shadow">
+              <details class="group bg-white rounded-2xl p-6 border border-gray-100 ambient-shadow">
                   <summary class="flex justify-between items-center cursor-pointer list-none">
                       <span class="font-headline text-lg font-bold text-primary">Details & Description</span>
                       <span class="material-symbols-outlined text-primary group-open:rotate-180 transition-transform duration-300">expand_more</span>
@@ -296,7 +296,7 @@
               <!-- Dynamic Accordions Blocks Mobile -->
               {% for block in section.blocks %}
                 {% if block.type == 'accordion' %}
-                  <details class="group bg-white rounded-2xl p-6 ambient-shadow mt-4" {{ block.shopify_attributes }}>
+                  <details class="group bg-white rounded-2xl p-6 border border-gray-100 ambient-shadow mt-4" {{ block.shopify_attributes }}>
                       <summary class="flex justify-between items-center cursor-pointer list-none">
                           <span class="font-headline text-lg font-bold text-primary">{{ block.settings.title }}</span>
                           <span class="material-symbols-outlined text-primary group-open:rotate-180 transition-transform duration-300">expand_more</span>
