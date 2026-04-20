@@ -135,7 +135,7 @@
                     
                     <!-- Paid Order (SAVE 10%) -->
                     <button onclick="document.querySelector('shopify-store').buyNow(event)" class="w-full relative flex justify-center items-center px-8 py-4 bg-white border-2 border-primary text-primary font-headline font-extrabold text-[13px] uppercase tracking-widest rounded-full hover:bg-gray-50 transition-all shadow-md active:scale-95">
-                        {{ section.settings.paid_order_text | default: 'Paid Order' }}
+                        <span shopify-text="'Paid Order - ₹' + Math.round(product.selectedOrFirstAvailableVariant.price.amount * 0.9)">{{ section.settings.paid_order_text | default: 'Paid Order' }}</span>
                         <span class="absolute -top-2 -right-1 bg-error text-white px-3 py-1 text-[11px] rounded-full shadow-lg font-black tracking-widest">{{ section.settings.paid_order_badge | default: 'SAVE 10%' }}</span>
                     </button>
                     
@@ -273,7 +273,7 @@
               <div class="bg-white rounded-3xl p-6 border border-gray-100 ambient-shadow mb-6 flex flex-col gap-4">
                   <!-- Paid Order (SAVE 10%) -->
                   <button onclick="document.querySelector('shopify-store').buyNow(event)" class="w-full relative flex justify-center items-center px-8 py-5 bg-white border-2 border-primary text-primary font-headline font-extrabold text-[14px] uppercase tracking-[0.1em] rounded-full active:scale-95 transition-all shadow-md">
-                      {{ section.settings.paid_order_text | default: 'Paid Order' }}
+                      <span shopify-text="'Paid Order - ₹' + Math.round(product.selectedOrFirstAvailableVariant.price.amount * 0.9)">{{ section.settings.paid_order_text | default: 'Paid Order' }}</span>
                       <span class="absolute -top-2 -right-1 bg-error text-white px-3 py-1.5 text-[11px] rounded-full shadow-lg font-black tracking-widest">{{ section.settings.paid_order_badge | default: 'SAVE 10%' }}</span>
                   </button>
                   
