@@ -122,6 +122,29 @@
 
                 <shopify-variant-selector></shopify-variant-selector>
 
+                <div class="flex flex-col space-y-4 mb-10 pt-4 border-t border-outline-variant/30">
+                    <!-- Row 1: Primary Actions -->
+                    <div class="flex gap-4 w-full">
+                        <button onclick="document.querySelector('shopify-store').buyNow(event)" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="flex-grow py-4 rounded-full bg-primary/95 text-surface-bright font-headline font-bold text-[11px] uppercase tracking-[0.2em] hover:opacity-85 flex justify-center items-center shadow-glow hover:shadow-floating transition-all active:scale-95">
+                            {{ section.settings.buy_now_text | default: 'Buy Now' }}
+                        </button>
+                        <button onclick="document.getElementById('cart').addLine(event).showModal();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" aria-label="Add to cart" class="flex-shrink-0 w-[52px] h-[52px] bg-surface-bright border border-outline/30 text-primary rounded-full hover:bg-surface hover:border-primary/50 transition-all flex justify-center items-center shadow-premium hover:shadow-soft-glow cursor-pointer">
+                            <span class="material-symbols-outlined text-[20px] font-light">shopping_bag</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Paid Order (SAVE 10%) -->
+                    <button onclick="document.querySelector('shopify-store').buyNow(event)" class="w-full relative flex justify-center items-center px-8 py-4 bg-surface-bright border border-outline/20 text-primary font-headline font-bold text-[11px] uppercase tracking-widest rounded-full hover:bg-surface hover:border-primary/50 transition-all shadow-premium hover:shadow-soft-glow active:scale-95">
+                        {{ section.settings.paid_order_text | default: 'Paid Order' }}
+                        <span class="absolute -top-2 -right-1 bg-error text-white px-2.5 py-1 text-[10px] rounded-full shadow-md font-bold tracking-widest">{{ section.settings.paid_order_badge | default: 'SAVE 10%' }}</span>
+                    </button>
+                    
+                    <!-- WhatsApp -->
+                    <a href="https://wa.me/{{ section.settings.whatsapp_number }}?text={{ section.settings.whatsapp_text | url_encode }}" target="_blank" class="w-full flex justify-center items-center px-6 py-4 bg-[#25D366] text-white font-headline font-bold text-[11px] uppercase tracking-[0.15em] rounded-full hover:opacity-90 transition-all gap-2 shadow-glow hover:shadow-floating active:scale-95">
+                        {{ section.settings.whatsapp_text | default: 'Order on WhatsApp' }}
+                    </a>
+                </div>
+
                 <div class="font-body leading-relaxed text-on-surface-variant mb-10 pt-4 border-t border-outline-variant/30" style="font-size: {{ section.settings.description_size }}px;">
                     <shopify-data query="product.description"></shopify-data>
                 </div>
@@ -146,29 +169,7 @@
                   {% endif %}
                 {% endfor %}
 
-                <!-- Custom Action Buttons -->
-                <div class="flex flex-col space-y-4 mb-12">
-                    <!-- Row 1: Primary Actions -->
-                    <div class="flex gap-4 w-full">
-                        <button onclick="document.querySelector('shopify-store').buyNow(event)" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" class="flex-grow py-4 rounded-full bg-primary/95 text-surface-bright font-headline font-bold text-[11px] uppercase tracking-[0.2em] hover:opacity-85 flex justify-center items-center shadow-glow hover:shadow-floating transition-all active:scale-95">
-                            {{ section.settings.buy_now_text | default: 'Buy Now' }}
-                        </button>
-                        <button onclick="document.getElementById('cart').addLine(event).showModal();" shopify-attr--disabled="!product.selectedOrFirstAvailableVariant.availableForSale" aria-label="Add to cart" class="flex-shrink-0 w-[52px] h-[52px] bg-surface-bright border border-outline/30 text-primary rounded-full hover:bg-surface hover:border-primary/50 transition-all flex justify-center items-center shadow-premium hover:shadow-soft-glow cursor-pointer">
-                            <span class="material-symbols-outlined text-[20px] font-light">shopping_bag</span>
-                        </button>
-                    </div>
-                    
-                    <!-- Paid Order (SAVE 10%) -->
-                    <button onclick="document.querySelector('shopify-store').buyNow(event)" class="w-full relative flex justify-center items-center px-8 py-4 bg-surface-bright border border-outline/20 text-primary font-headline font-bold text-[11px] uppercase tracking-widest rounded-full hover:bg-surface hover:border-primary/50 transition-all shadow-premium hover:shadow-soft-glow active:scale-95">
-                        {{ section.settings.paid_order_text | default: 'Paid Order' }}
-                        <span class="absolute -top-2 -right-1 bg-error text-white px-2.5 py-1 text-[10px] rounded-full shadow-md font-bold tracking-widest">{{ section.settings.paid_order_badge | default: 'SAVE 10%' }}</span>
-                    </button>
-                    
-                    <!-- WhatsApp -->
-                    <a href="https://wa.me/{{ section.settings.whatsapp_number }}?text={{ section.settings.whatsapp_text | url_encode }}" target="_blank" class="w-full flex justify-center items-center px-6 py-4 bg-[#25D366] text-white font-headline font-bold text-[11px] uppercase tracking-[0.15em] rounded-full hover:opacity-90 transition-all gap-2 shadow-glow hover:shadow-floating active:scale-95">
-                        {{ section.settings.whatsapp_text | default: 'Order on WhatsApp' }}
-                    </a>
-                </div>
+
 
                 <!-- Badges -->
                 <div class="pt-8 border-t border-surface-container-high">
@@ -267,6 +268,19 @@
           </section>
 
           <section class="px-6 py-8 bg-white space-y-4 rounded-t-[2.5rem]">
+              <!-- Main Mobile Control Buttons -->
+              <div class="bg-surface-bright rounded-3xl p-6 ambient-shadow mb-6 flex flex-col gap-4">
+                  <!-- Paid Order (SAVE 10%) -->
+                  <button onclick="document.querySelector('shopify-store').buyNow(event)" class="w-full relative flex justify-center items-center px-8 py-5 bg-surface-bright border border-outline/20 text-primary font-headline font-bold text-[11px] uppercase tracking-[0.1em] rounded-full active:scale-95 transition-all shadow-premium hover:shadow-soft-glow">
+                      {{ section.settings.paid_order_text | default: 'Paid Order' }}
+                      <span class="absolute -top-2 -right-1 bg-error text-white px-2.5 py-1 text-[10px] rounded-full shadow-md font-bold tracking-widest">{{ section.settings.paid_order_badge | default: 'SAVE 10%' }}</span>
+                  </button>
+                  
+                  <!-- WhatsApp -->
+                  <a href="https://wa.me/{{ section.settings.whatsapp_number }}?text={{ section.settings.whatsapp_text | url_encode }}" target="_blank" class="w-full flex justify-center items-center px-6 py-5 bg-[#25D366] text-white font-headline font-bold text-[11px] uppercase tracking-[0.1em] rounded-full active:scale-95 transition-all shadow-glow gap-2 hover:shadow-floating">
+                      {{ section.settings.whatsapp_text | default: 'Order on WhatsApp' }}
+                  </a>
+              </div>
               
               <!-- Details Accordion -->
               <details class="group bg-white rounded-2xl p-6 ambient-shadow">
@@ -299,19 +313,7 @@
                 {% endif %}
               {% endfor %}
 
-              <!-- Main Mobile Control Buttons -->
-              <div class="bg-surface-bright rounded-3xl p-6 ambient-shadow mt-6 mb-4 flex flex-col gap-4">
-                  <!-- Paid Order (SAVE 10%) -->
-                  <button onclick="document.querySelector('shopify-store').buyNow(event)" class="w-full relative flex justify-center items-center px-8 py-5 bg-surface-bright border border-outline/20 text-primary font-headline font-bold text-[11px] uppercase tracking-[0.1em] rounded-full active:scale-95 transition-all shadow-premium hover:shadow-soft-glow">
-                      {{ section.settings.paid_order_text | default: 'Paid Order' }}
-                      <span class="absolute -top-2 -right-1 bg-error text-white px-2.5 py-1 text-[10px] rounded-full shadow-md font-bold tracking-widest">{{ section.settings.paid_order_badge | default: 'SAVE 10%' }}</span>
-                  </button>
-                  
-                  <!-- WhatsApp -->
-                  <a href="https://wa.me/{{ section.settings.whatsapp_number }}?text={{ section.settings.whatsapp_text | url_encode }}" target="_blank" class="w-full flex justify-center items-center px-6 py-5 bg-[#25D366] text-white font-headline font-bold text-[11px] uppercase tracking-[0.1em] rounded-full active:scale-95 transition-all shadow-glow gap-2 hover:shadow-floating">
-                      {{ section.settings.whatsapp_text | default: 'Order on WhatsApp' }}
-                  </a>
-              </div>
+
           </section>
 
       </main>
