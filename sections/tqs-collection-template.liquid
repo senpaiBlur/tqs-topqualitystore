@@ -168,24 +168,44 @@
             </p>
         </header>
 
-        <!-- Clean Filter Bar -->
-        <div class="flex flex-col md:flex-row items-center gap-6 py-10 border-y border-black/5 mb-16">
-            <div class="flex items-center gap-4 w-full md:w-auto">
-                <span class="font-label text-[10px] font-black uppercase tracking-[0.2em] text-outline">Category</span>
-                <div class="relative flex-grow md:min-w-[260px] tqs-select-wrapper">
-                    <select onchange="window.location.href=this.value" class="tqs-select w-full bg-surface-container-low border-0 text-black font-label text-[11px] font-black uppercase tracking-widest px-6 py-5 rounded-lg cursor-pointer focus:ring-1 focus:ring-black transition-all">
+        <!-- Premium Filter Bar -->
+        <div class="flex flex-col lg:flex-row items-center gap-8 py-12 border-y border-black/5 mb-16 w-full">
+            <!-- Category Filter -->
+            <div class="flex flex-col gap-3 w-full lg:w-auto">
+                <span class="font-label text-[10px] font-black uppercase tracking-[0.2em] text-outline ml-2">Browse Category</span>
+                <div class="relative min-w-[260px] tqs-select-wrapper">
+                    <select onchange="window.location.href=this.value" class="tqs-select w-full bg-surface-container-low border border-transparent text-black font-label text-[11px] font-black uppercase tracking-widest px-8 py-5 rounded-2xl cursor-pointer focus:ring-1 focus:ring-primary/20 focus:border-primary/20 transition-all hover:bg-surface-container-high">
                         <option value="/collections/all">Everything</option>
                         {% for c in collections %}
-                            <option value="{{ c.url }}" {% if collection.handle == c.handle %}selected{% endif %}>{{ c.title }}</option>
+                            {% if c.products_count > 0 %}
+                                <option value="{{ c.url }}" {% if collection.handle == c.handle %}selected{% endif %}>{{ c.title }} ({{ c.products_count }})</option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                 </div>
             </div>
 
-            <div class="flex items-center gap-4 w-full md:w-auto md:ml-auto">
-                <span class="font-label text-[10px] font-black uppercase tracking-[0.2em] text-outline">Sort</span>
-                <div class="relative flex-grow md:min-w-[260px] tqs-select-wrapper">
-                    <select onchange="applySort(this.value)" class="tqs-select w-full bg-surface-container-low border-0 text-black font-label text-[11px] font-black uppercase tracking-widest px-6 py-5 rounded-lg cursor-pointer focus:ring-1 focus:ring-black transition-all">
+            <!-- Price Filter -->
+            <div class="flex flex-col gap-3 w-full lg:w-auto">
+                <span class="font-label text-[10px] font-black uppercase tracking-[0.2em] text-outline ml-2">Price Range</span>
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-outline">₹</span>
+                        <input type="number" id="min-price" placeholder="Min" class="w-24 bg-surface-container-low border-0 text-black font-label text-[11px] font-bold px-8 py-5 rounded-2xl focus:ring-1 focus:ring-primary/20" onchange="applyPriceFilter()">
+                    </div>
+                    <span class="text-outline">to</span>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-outline">₹</span>
+                        <input type="number" id="max-price" placeholder="Max" class="w-24 bg-surface-container-low border-0 text-black font-label text-[11px] font-bold px-8 py-5 rounded-2xl focus:ring-1 focus:ring-primary/20" onchange="applyPriceFilter()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sort Filter -->
+            <div class="flex flex-col gap-3 w-full lg:w-auto lg:ml-auto">
+                <span class="font-label text-[10px] font-black uppercase tracking-[0.2em] text-outline ml-2">Sort By</span>
+                <div class="relative min-w-[260px] tqs-select-wrapper">
+                    <select onchange="applySort(this.value)" class="tqs-select w-full bg-surface-container-low border border-transparent text-black font-label text-[11px] font-black uppercase tracking-widest px-8 py-5 rounded-2xl cursor-pointer focus:ring-1 focus:ring-primary/20 focus:border-primary/20 transition-all hover:bg-surface-container-high">
                         <option value="">Default Selection</option>
                         <option value="PRICE_ASC">Price: Low to High</option>
                         <option value="PRICE_DESC">Price: High to Low</option>
@@ -210,18 +230,15 @@
                     <template>
                         <article class="flex flex-col group custom-product-card">
                             <a shopify-attr--href="product.onlineStoreUrl" class="block flex-grow">
-                                <div class="aspect-[4/5] relative w-full bg-gradient-to-tr from-surface-container-low to-surface-bright rounded-[2rem] overflow-hidden shadow-premium transition-all duration-700 ease-out group-hover:shadow-floating group-hover:-translate-y-3 border border-white/60">
+                                <div class="aspect-square relative w-full bg-gradient-to-tr from-surface-container-low to-surface-bright rounded-[2rem] overflow-hidden shadow-premium transition-all duration-700 ease-out group-hover:shadow-floating group-hover:-translate-y-3 border border-white/60">
                                     <div class="image-wrapper w-full h-full p-8 mix-blend-multiply">
                                         <shopify-media query="product.selectedOrFirstAvailableVariant.image"></shopify-media>
                                     </div>
                                     
                                     <div class="absolute top-5 left-5 flex flex-col gap-2 z-10">
-                                        <div class="bg-primary/95 backdrop-blur-md text-surface-bright px-4 py-1.5 font-label text-[9px] font-bold uppercase tracking-[0.2em] rounded-full shadow-soft-glow">
-                                            <shopify-data query="product.vendor"></shopify-data>
-                                        </div>
                                         <div class="bg-rose-400/95 backdrop-blur-md text-white font-label text-[9px] font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full shadow-soft-glow" 
                                              shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > product.selectedOrFirstAvailableVariant.price.amount ? 'display:inline-block' : 'display:none'">
-                                            SAVE <span shopify-text="Math.round(((product.selectedOrFirstAvailableVariant.compareAtPrice.amount - product.selectedOrFirstAvailableVariant.price.amount) / product.selectedOrFirstAvailableVariant.compareAtPrice.amount) * 100) + '%'"></span>
+                                            SALE <span shopify-text="Math.round(((product.selectedOrFirstAvailableVariant.compareAtPrice.amount - product.selectedOrFirstAvailableVariant.price.amount) / product.selectedOrFirstAvailableVariant.compareAtPrice.amount) * 100) + '%'"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -296,6 +313,30 @@
 </footer>
 
 <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('filter.v.price.gte')) {
+            document.getElementById('min-price').value = urlParams.get('filter.v.price.gte');
+        }
+        if (urlParams.has('filter.v.price.lte')) {
+            document.getElementById('max-price').value = urlParams.get('filter.v.price.lte');
+        }
+    });
+
+    function applyPriceFilter() {
+        const min = document.getElementById('min-price').value;
+        const max = document.getElementById('max-price').value;
+        const url = new URL(window.location.href);
+        
+        if (min) url.searchParams.set('filter.v.price.gte', min);
+        else url.searchParams.delete('filter.v.price.gte');
+        
+        if (max) url.searchParams.set('filter.v.price.lte', max);
+        else url.searchParams.delete('filter.v.price.lte');
+        
+        window.location.href = url.toString();
+    }
+
     function applySort(value) {
         const listContext = document.querySelector('shopify-list-context');
         if (!listContext) return;

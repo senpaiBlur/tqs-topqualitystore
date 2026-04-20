@@ -161,7 +161,7 @@
               <shopify-list-context type="product" query="products" first="12">
                   <template>
                       <div class="group flex flex-col">
-                          <div class="relative aspect-[4/5] bg-gradient-to-tr from-surface-container-low to-surface-bright rounded-[2rem] overflow-hidden shadow-premium transition-all duration-700 ease-out group-hover:shadow-floating group-hover:-translate-y-3 border border-white/60">
+                          <div class="relative aspect-square bg-gradient-to-tr from-surface-container-low to-surface-bright rounded-[2rem] overflow-hidden shadow-premium transition-all duration-700 ease-out group-hover:shadow-floating group-hover:-translate-y-3 border border-white/60">
                               <a shopify-attr--href="product.onlineStoreUrl" class="block w-full h-full p-8 hidden-media-container">
                                 <style>
                                   .hidden-media-container shopify-media::part(image) {
@@ -172,12 +172,9 @@
                                 <shopify-media class="w-full h-full mix-blend-multiply transition-transform duration-700 group-hover:scale-110" query="product.selectedOrFirstAvailableVariant.image"></shopify-media>
                               </a>
                               <div class="absolute top-5 left-5 flex flex-col gap-2 z-10">
-                                  <span class="bg-primary/95 backdrop-blur-md text-surface-bright px-4 py-1.5 rounded-full font-label text-[9px] uppercase font-bold tracking-widest shadow-soft-glow">
-                                      <shopify-data query="product.vendor"></shopify-data>
-                                  </span>
                                   <div class="bg-rose-400/95 backdrop-blur-md text-white px-4 py-1.5 rounded-full font-label text-[9px] uppercase font-bold tracking-widest shadow-soft-glow"
                                        shopify-attr--style="product.selectedOrFirstAvailableVariant.compareAtPrice.amount > product.selectedOrFirstAvailableVariant.price.amount ? 'display:inline-block' : 'display:none'">
-                                    SAVE <span shopify-text="Math.round(((product.selectedOrFirstAvailableVariant.compareAtPrice.amount - product.selectedOrFirstAvailableVariant.price.amount) / product.selectedOrFirstAvailableVariant.compareAtPrice.amount) * 100) + '%'"></span>
+                                    SALE <span shopify-text="Math.round(((product.selectedOrFirstAvailableVariant.compareAtPrice.amount - product.selectedOrFirstAvailableVariant.price.amount) / product.selectedOrFirstAvailableVariant.compareAtPrice.amount) * 100) + '%'"></span>
                                   </div>
                               </div>
                           </div>
